@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class CFGame {
@@ -205,6 +206,46 @@ public class CFGame {
         }
         return 0;
     }
+
+    //returns a column (0-6)
+    public int minimax(int[][] state, int depth, boolean maximizingPlayer) {
+        if (depth==0 || this.isGameOver()) {
+            return maximizingColumn(int[] state);
+        }
+        //if rational, the maximizing player (black) will pick the slot that maximizes his score down the line
+        if (maximizingPlayer) {
+            //worst case
+            double maxEval = Double.NEGATIVE_INFINITY;
+            //create a list of the nextGames
+            ArrayList<CFGame> nextGames = new ArrayList<>();
+            for (int x=0; x<7; x++) {
+                CFGame game = new CFGame();
+                game.setRedTurn(false);
+                game.setState(this.getState());
+                game.play(x);
+                nextGames.add(game);
+            }
+            ArrayList<Integer> nextScores = new ArrayList<>();
+            for (int x=0; x<7; x++) {
+                Integer score = nextGames.get(x).getScore();
+                nextScores.add(score);
+            }
+
+        }
+        if (!maximizingPlayer) {
+
+        }
+    }
+
+    public int maximizingColumn(int[][] state) {
+
+    }
+
+    public int getScore() {
+        int[][] state = this.getState();
+        return 0;
+    }
+
 }
 
 
