@@ -45,7 +45,6 @@ public class CFGame {
                     return true;
                 }
                 else {
-                    System.out.println(this.minimax(state, true, 3));
                     state[column][j]=-1;
                     isRedTurn = true;
                     return true;
@@ -207,6 +206,7 @@ public class CFGame {
 
     //returns a score representing the best move for maximizingPlayer (black)
     public double minimax(int[][] state, boolean maximizingPlayer, int n) {
+        System.out.println(n);
         //make copy of board
         CFGame c = new CFGame();
         c.setState(state);
@@ -216,10 +216,10 @@ public class CFGame {
         if (c.isGameOver() || n==0) {
             if (c.winner()==1) {
                 //black player lost
-                return 10000;
+                return Double.NEGATIVE_INFINITY;
             } else if (c.winner()==-1) {
                 //black player won
-                return -10000;
+                return Double.POSITIVE_INFINITY;
             } else if (c.winner()==0){
                 return 0;
             }
@@ -234,12 +234,13 @@ public class CFGame {
             for (int x = 0; x < 7; x++) {
                 CFGame game = new CFGame();
                 game.setRedTurn(false);
-                game.setState(this.getState());
+                game.setState(c.getState());
                 game.play(x);
                 nextGames.add(game);
             }
             for (CFGame g: nextGames) {
                 double child = minimax(g.getState(), false, n-1);
+                System.out.println("Child score: " + child);
                 nextScores.add(child);
             }
             //return the best of these 7 scores
@@ -248,7 +249,7 @@ public class CFGame {
             for (int x = 0; x < 7; x++) {
                 CFGame game = new CFGame();
                 game.setRedTurn(true);
-                game.setState(this.getState());
+                game.setState(c.getState());
                 game.play(x);
                 nextGames.add(game);
             }

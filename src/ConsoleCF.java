@@ -29,6 +29,7 @@ public class ConsoleCF extends CFGame{
         while (!this.isGameOver()){
             if (red==0){//player one is red, goes first
                 this.play(player1.nextMove(this));
+                System.out.println(this.minimax(this.state, true, 3));
                 this.play(player2.nextMove(this));}
 
 
