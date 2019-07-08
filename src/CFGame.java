@@ -1,15 +1,12 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class CFGame {
     //state[i][j]= 0 means the i,j slot is empty
     //state[i][j]= 1 means the i,j slot is filled by red
     //state[i][j]=-1 means the i,j slot is filled by black
-
-    private int[][] state;
-    private boolean isRedTurn;
+    protected int[][] state;
+    protected boolean isRedTurn;
+    private Map<int[][], Integer> minimaxLookup;
 
     //initialize the board (7 columns, 6 rows)
     {
@@ -48,6 +45,7 @@ public class CFGame {
                     return true;
                 }
                 else {
+                    System.out.println(this.minimax(state, true, 3));
                     state[column][j]=-1;
                     isRedTurn = true;
                     return true;
@@ -207,44 +205,61 @@ public class CFGame {
         return 0;
     }
 
-    //returns a column (0-6)
-    public int minimax(int[][] state, int depth, boolean maximizingPlayer) {
-        if (depth==0 || this.isGameOver()) {
-            return maximizingColumn(int[] state);
+    //returns a score representing the best move for maximizingPlayer (black)
+    public double minimax(int[][] state, boolean maximizingPlayer, int n) {
+        //make copy of board
+        CFGame c = new CFGame();
+        c.setState(state);
+        //whose turn is it?
+        c.setRedTurn(maximizingPlayer);
+        //if the board state represents a finished state or if n==0 (BASE CASE)
+        if (c.isGameOver() || n==0) {
+            if (c.winner()==1) {
+                //black player lost
+                return 10000;
+            } else if (c.winner()==-1) {
+                //black player won
+                return -10000;
+            } else if (c.winner()==0){
+                return 0;
+            }
+            if (n==0) {
+                return 1;
+            }
         }
-        //if rational, the maximizing player (black) will pick the slot that maximizes his score down the line
+        //generate the next 7 board states if the game is not yet over
+        ArrayList<CFGame> nextGames = new ArrayList<>();
+        ArrayList<Double> nextScores = new ArrayList<>();
         if (maximizingPlayer) {
-            //worst case
-            double maxEval = Double.NEGATIVE_INFINITY;
-            //create a list of the nextGames
-            ArrayList<CFGame> nextGames = new ArrayList<>();
-            for (int x=0; x<7; x++) {
+            for (int x = 0; x < 7; x++) {
                 CFGame game = new CFGame();
                 game.setRedTurn(false);
                 game.setState(this.getState());
                 game.play(x);
                 nextGames.add(game);
             }
-            ArrayList<Integer> nextScores = new ArrayList<>();
-            for (int x=0; x<7; x++) {
-                Integer score = nextGames.get(x).getScore();
-                nextScores.add(score);
+            for (CFGame g: nextGames) {
+                double child = minimax(g.getState(), false, n-1);
+                nextScores.add(child);
             }
-
+            //return the best of these 7 scores
+            return Collections.max(nextScores);
+        } else {
+            for (int x = 0; x < 7; x++) {
+                CFGame game = new CFGame();
+                game.setRedTurn(true);
+                game.setState(this.getState());
+                game.play(x);
+                nextGames.add(game);
+            }
+            for (CFGame g: nextGames) {
+                double child = minimax(g.getState(), true, n-1);
+                nextScores.add(child);
+            }
+            return Collections.min(nextScores);
         }
-        if (!maximizingPlayer) {
-
-        }
     }
 
-    public int maximizingColumn(int[][] state) {
-
-    }
-
-    public int getScore() {
-        int[][] state = this.getState();
-        return 0;
-    }
 
 }
 
