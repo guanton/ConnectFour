@@ -199,7 +199,7 @@ public class GUICF extends CFGame {
     }
 
     public static void main(String[] args) {
-        GUICF guiGame = new GUICF(new myAI(), new RandomAI());
+        GUICF guiGame = new GUICF(new myAI());
     }
 
 }
