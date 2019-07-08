@@ -86,13 +86,12 @@ public class GUICF extends CFGame {
             this_board.paint(c, row, 1); // red just played so label must be red
         //check winner
         if (g.isGameOver()) {
-            if (g.winner() == 1)
-                gameOverLabel.setText(redPlayer.getName() + " won!");
             if (g.winner() == -1)
-                gameOverLabel.setText(blackPlayer.getName() + " won!");
+                gameOverLabel.setText(blackPlayer.getName() + " (black)" + " won!");
             if (g.winner() == 0)
                 gameOverLabel.setText("It's a draw!");
-            return;
+            if (g.winner()== 1)
+                gameOverLabel.setText("Human player (red) won!");
         }
     }
 
@@ -153,11 +152,9 @@ public class GUICF extends CFGame {
     }
 
     public class ButtonListener implements ActionListener {
-        boolean isPlayButton;
         int column;
 
         ButtonListener(boolean p, int c) {
-            isPlayButton = p;
             column = c;
         }
 
@@ -170,31 +167,22 @@ public class GUICF extends CFGame {
                 else
                     playGUI(blackPlayer.nextMove(g));
             }
+            //Human vs AI
             else {
-                playGUI(column);
-                if (g.isGameOver()) {
-                    if (g.winner() == 1)
-                        gameOverLabel.setText(redPlayer.getName() + " won!");
-                    if (g.winner() == -1)
-                        gameOverLabel.setText(blackPlayer.getName() + " won!");
-                    if (g.winner() == 0)
-                        gameOverLabel.setText("It's a draw!");
-                    return;
+                boolean valid;
+                valid=false;
+                for (int j=0; j<6; j++) {
+                    if (g.getState()[column][j]==0) {
+                        valid = true;
+                    }
                 }
-                playGUI(blackPlayer.nextMove(g));
+                if (!g.isGameOver() && valid == true) {
+                    playGUI(column);
+                    if (!g.isGameOver()) {
+                        playGUI(blackPlayer.nextMove(g));
+                    }
+                }
             }
-        }
-    }
-
-    class HumanPlayer implements CFPlayer{
-
-        @Override
-        public int nextMove(CFGame g) {
-            return 0;
-        }
-
-        public String getName(){
-            return "Human Player";
         }
     }
 
