@@ -41,7 +41,7 @@ public class GUICF extends CFGame {
     public GUICF(CFPlayer ai) {
         //sets up and starts a human vs. AI game
         g = new CFGame();
-        redPlayer = ai;
+        blackPlayer = ai;
         Human = true;
         displayBoard();
     }
