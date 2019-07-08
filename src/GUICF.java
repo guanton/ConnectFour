@@ -181,7 +181,7 @@ public class GUICF extends CFGame {
                         gameOverLabel.setText("It's a draw!");
                     return;
                 }
-                playGUI(redPlayer.nextMove(g));
+                playGUI(blackPlayer.nextMove(g));
             }
         }
     }
