@@ -234,7 +234,7 @@ public class CFGame {
                 return 1;
             }
         }
-        //generate the next 7 board states if the game is not yet over
+        //generate the next (up to) 7 board states if the game is not yet over
         ArrayList<CFGame> nextGames = new ArrayList<>();
         ArrayList<Double> nextScores = new ArrayList<>();
         if (maximizingPlayer) {
@@ -242,16 +242,16 @@ public class CFGame {
                 CFGame game = new CFGame();
                 game.setRedTurn(false);
                 game.setState(c.getState());
-                game.play(x);
-                nextGames.add(game);
+                if (game.play(x)) {
+                    nextGames.add(game);
+                }
             }
-            for (int x = 0; x<7; x++) {
-                CFGame g = nextGames.get(x);
+            for (CFGame g: nextGames) {
                 double child = minimax(g.getState(), false, n-1);
                 System.out.println("Child score: " + child);
                 nextScores.add(child);
-                if (n==3) {
-                    minimaxLookup.put(child,x);
+                if (n==5) {
+                    minimaxLookup.put(child,nextGames.lastIndexOf(g));
                 }
             }
             //return the best of these 7 scores
@@ -261,8 +261,9 @@ public class CFGame {
                 CFGame game = new CFGame();
                 game.setRedTurn(true);
                 game.setState(c.getState());
-                game.play(x);
-                nextGames.add(game);
+                if (game.play(x)) {
+                    nextGames.add(game);
+                }
             }
             for (CFGame g: nextGames) {
                 double child = minimax(g.getState(), true, n-1);

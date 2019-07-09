@@ -1,10 +1,28 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class minimaxAI implements CFPlayer{
 
     @Override
     public int nextMove(CFGame g) {
-        Double minimaxScore = g.minimax(g.getState(), true, 3);
+        int[][] s = g.getState();
+        List<Integer> start = new ArrayList<>();
+        for (int y=0; y<6; y++) {
+            start.add(s[3][y]);
+        }
+        if (!start.contains(1) && !start.contains(-1)) {
+            return 3;
+        }
+        List<Integer> start1 = new ArrayList<>();
+        for (int y=0; y<6; y++) {
+            start1.add(s[4][y]);
+        }
+        if (!start1.contains(1) && !start1.contains(-1)) {
+            return 4;
+        }
+        Double minimaxScore = g.minimax(g.getState(), true, 5);
         Map<Double, Integer> lookup = g.getMinimaxLookup();
         Integer col = lookup.get(minimaxScore);
         return col;
