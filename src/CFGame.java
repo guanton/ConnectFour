@@ -7,6 +7,7 @@ public class CFGame {
     protected int[][] state;
     protected boolean isRedTurn;
     private Map<Double, Integer> minimaxLookup;
+    protected int lastColPlayed;
 
     public CFGame() {
         state = new int[7][6];
@@ -47,11 +48,13 @@ public class CFGame {
                 if (isRedTurn){
                     state[column][j]=1;
                     isRedTurn = false;
+                    lastColPlayed = column;
                     return true;
                 }
                 else {
                     state[column][j]=-1;
                     isRedTurn = true;
+                    lastColPlayed = column;
                     return true;
                 }
             }
@@ -209,8 +212,8 @@ public class CFGame {
         return 0;
     }
 
-    //returns a score representing the best move for maximizingPlayer (black)
-    public double minimax(int[][] state, boolean maximizingPlayer, int n) {
+    //returns a pair, first coordinate is the score of the move, second coordinate is the column played
+    public List<Number> minimax(int[][] state, boolean maximizingPlayer, int n) {
         //make copy of board
         CFGame c = new CFGame();
         c.setState(state);
@@ -221,58 +224,101 @@ public class CFGame {
             if (c.isGameOver()) {
                 if (c.winner()==1) {
                     //black player lost
-                    return Double.NEGATIVE_INFINITY;
+                    Number[] arr = {Double.NEGATIVE_INFINITY, lastColPlayed};
+                    return Arrays.asList(arr);
                 } else if (c.winner()==-1) {
                     //black player won
-                    return Double.POSITIVE_INFINITY;
+                    Number[] arr = {Double.POSITIVE_INFINITY, lastColPlayed};
+                    return Arrays.asList(arr);
                 } else if (c.winner()==0){
-                    return 0;
+                    Number[] arr = {0, lastColPlayed};
+                    return Arrays.asList(arr);
                 }
             }
+            //BASE CASE
             if (n==0) {
-                return Math.random()*5;
+                Number[] arr = {this.evaluateState(), lastColPlayed};
+                return Arrays.asList(arr);
             }
         }
-        //generate the next (up to) 7 board states if the game is not yet over
-        ArrayList<CFGame> nextGames = new ArrayList<>();
-        ArrayList<Double> nextScores = new ArrayList<>();
         if (maximizingPlayer) {
+            //initially, assume the worst
+            double maxVal = Double.NEGATIVE_INFINITY;
+            //copy of game where it is black's turn
+            CFGame game_ = new CFGame();
+            game_.setRedTurn(false);
+            int col=0;
+            //first, pick a random column, if nothing better is found
+            //then this column will be played
+            Random r = new Random();
+            boolean illegal=true;
+            while (illegal) {
+                int j = r.nextInt(7);
+                if (game_.play(j)) {
+                    col=j;
+                    illegal=false;
+                }
+            }
+            //now we see if there are any better moves
             for (int x = 0; x < 7; x++) {
+                //make a copy of the board
                 CFGame game = new CFGame();
                 game.setRedTurn(false);
                 game.setState(c.getState());
+                //consider the move, if valid
                 if (game.play(x)) {
-                    nextGames.add(game);
+                    //retrieve its score recursively
+                    Number currVal = minimax(game.getState(), false, n-1).get(0);
+                    if ((double) currVal>maxVal) {
+                        maxVal= (double) currVal;
+                        col = x;
+                    }
                 }
             }
-            for (CFGame g: nextGames) {
-                double child = minimax(g.getState(), false, n-1);
-                System.out.println("Child score: " + child);
-                nextScores.add(child);
-                if (n==5) {
-                    minimaxLookup.put(child,nextGames.lastIndexOf(g));
-                }
-            }
-            //return the best of these 7 scores
-            return Collections.max(nextScores);
+            Number[] arr = {maxVal, col};
+            return Arrays.asList(arr);
         } else {
+            //initially, assume the worst (for red), which means that Black wins
+            double minVal = Double.POSITIVE_INFINITY;
+            //copy of game where it is red's turn
+            CFGame game_ = new CFGame();
+            game_.setRedTurn(true);
+            int col=0;
+            //first, pick a random column, if nothing better is found
+            //then this column will be played
+            Random r = new Random();
+            boolean illegal=true;
+            while (illegal) {
+                int j = r.nextInt(7);
+                if (game_.play(j)) {
+                    col=j;
+                    illegal=false;
+                }
+            }
+            //now we see if there are any better moves
             for (int x = 0; x < 7; x++) {
+                //make a copy of the board
                 CFGame game = new CFGame();
                 game.setRedTurn(true);
                 game.setState(c.getState());
+                //consider the move, if valid
                 if (game.play(x)) {
-                    nextGames.add(game);
+                    //retrieve its score recursively
+                    Number currVal = minimax(game.getState(), true, n-1).get(0);
+                    if ((double) currVal<minVal) {
+                        minVal= (double) currVal;
+                        col = x;
+                    }
                 }
             }
-            for (CFGame g: nextGames) {
-                double child = minimax(g.getState(), true, n-1);
-                nextScores.add(child);
-            }
-            System.out.println("here: " + minimaxLookup);
-            return Collections.min(nextScores);
+            Number[] arr = {minVal, col};
+            return Arrays.asList(arr);
         }
     }
 
+    public double evaluateState() {
+        return Math.random()*5;
+    }
 
 }
 
