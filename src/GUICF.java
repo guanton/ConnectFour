@@ -187,7 +187,7 @@ public class GUICF extends CFGame {
     }
 
     public static void main(String[] args) {
-        GUICF guiGame = new GUICF(new myAI());
+        GUICF guiGame = new GUICF(new minimaxAI());
     }
 
 }

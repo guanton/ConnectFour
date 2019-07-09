@@ -17,6 +17,11 @@ public class CFGame {
         minimaxLookup = new HashMap<>();
     }
 
+    //return the minimax Map
+    public Map<Double, Integer> getMinimaxLookup() {
+        return minimaxLookup;
+    }
+
     //return the board state
     public int[][] getState() {
         int[][] ret_arr = new int[7][6];
@@ -215,10 +220,10 @@ public class CFGame {
         //if the board state represents a finished game or if n==0 (BASE CASE)
         if (c.isGameOver() || n==0) {
             if (c.isGameOver()) {
-                if (c.winner()==-1) {
+                if (c.winner()==1) {
                     //black player lost
                     return Double.NEGATIVE_INFINITY;
-                } else if (c.winner()==1) {
+                } else if (c.winner()==-1) {
                     //black player won
                     return Double.POSITIVE_INFINITY;
                 } else if (c.winner()==0){
