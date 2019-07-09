@@ -211,7 +211,6 @@ public class CFGame {
 
     //returns a score representing the best move for maximizingPlayer (black)
     public double minimax(int[][] state, boolean maximizingPlayer, int n) {
-        System.out.println(n);
         //make copy of board
         CFGame c = new CFGame();
         c.setState(state);
@@ -231,7 +230,7 @@ public class CFGame {
                 }
             }
             if (n==0) {
-                return 1;
+                return Math.random()*5;
             }
         }
         //generate the next (up to) 7 board states if the game is not yet over

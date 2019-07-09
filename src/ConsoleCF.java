@@ -20,8 +20,7 @@ public class ConsoleCF extends CFGame{
     public ConsoleCF(CFPlayer ai1, CFPlayer ai2){
         player1=ai1;
         player2=ai2;
-        Random rand= new Random();
-        red = rand.nextInt(2);//generate random int bt 0 and 1
+        red = 0;
     }
 
     public void playOut(){
