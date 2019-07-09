@@ -69,7 +69,7 @@ public class GUICF extends CFGame {
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this_board = new GameBoard();
         frame.getContentPane().add(this_board);
-        frame.setSize(1500, 1000);
+        frame.setSize(800, 600);
         frame.setVisible(true);
         this_board.setVisible(true);
     }
@@ -169,8 +169,7 @@ public class GUICF extends CFGame {
             }
             //Human vs AI
             else {
-                boolean valid;
-                valid=false;
+                boolean valid=false;
                 for (int j=0; j<6; j++) {
                     if (g.getState()[column][j]==0) {
                         valid = true;

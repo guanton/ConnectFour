@@ -214,7 +214,7 @@ public class CFGame {
 
     //returns a pair, first coordinate is the score of the move, second coordinate is the column played
     public List<Number> minimax(int[][] state, boolean maximizingPlayer, int n) {
-        //make copy of board
+        //make copy of the board that represents "state"
         CFGame c = new CFGame();
         c.setState(state);
         //whose turn is it? since black is maximizingPlayer, red is the opposite
@@ -268,7 +268,7 @@ public class CFGame {
                 //consider the move, if valid
                 if (game.play(x)) {
                     //retrieve its score recursively
-                    Number currVal = minimax(game.getState(), false, n-1).get(0);
+                    double currVal = (double) minimax(game.getState(), false, n-1).get(0);
                     if ((double) currVal>maxVal) {
                         maxVal= (double) currVal;
                         col = x;
@@ -304,7 +304,7 @@ public class CFGame {
                 //consider the move, if valid
                 if (game.play(x)) {
                     //retrieve its score recursively
-                    Number currVal = minimax(game.getState(), true, n-1).get(0);
+                    double currVal = (double) minimax(game.getState(), true, n-1).get(0);
                     if ((double) currVal<minVal) {
                         minVal= (double) currVal;
                         col = x;
@@ -317,7 +317,7 @@ public class CFGame {
     }
 
     public double evaluateState() {
-        return Math.random()*5;
+        return Math.random()*5.0;
     }
 
 }
