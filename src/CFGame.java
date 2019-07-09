@@ -191,6 +191,8 @@ public class CFGame {
                 }
             }
 
+
+
             //loop for rightward diagonal check
             for (int i=0;i<4;i++){
                 for (int j=0;j<=2;j++){
@@ -213,7 +215,7 @@ public class CFGame {
     }
 
     //returns a pair, first coordinate is the score of the move, second coordinate is the column played
-    public List<Number> minimax(int[][] state, boolean maximizingPlayer, int n) {
+    public List<Number> minimax(int[][] state, boolean maximizingPlayer, int n, double alpha, double beta) {
         //make copy of the board that represents "state"
         CFGame c = new CFGame();
         c.setState(state);
@@ -268,10 +270,14 @@ public class CFGame {
                 //consider the move, if valid
                 if (game.play(x)) {
                     //retrieve its score recursively
-                    double currVal = (double) minimax(game.getState(), false, n-1).get(0);
+                    double currVal = (double) minimax(game.getState(), false, n-1, alpha, beta).get(0);
                     if ((double) currVal>maxVal) {
                         maxVal= (double) currVal;
                         col = x;
+                    }
+                    alpha = Math.max(alpha, currVal);
+                    if (beta<=alpha) {
+                        break;
                     }
                 }
             }
@@ -304,10 +310,14 @@ public class CFGame {
                 //consider the move, if valid
                 if (game.play(x)) {
                     //retrieve its score recursively
-                    double currVal = (double) minimax(game.getState(), true, n-1).get(0);
+                    double currVal = (double) minimax(game.getState(), true, n-1, alpha, beta).get(0);
                     if ((double) currVal<minVal) {
                         minVal= (double) currVal;
                         col = x;
+                    }
+                    beta = Math.min(beta, currVal);
+                    if (beta<=alpha) {
+                        break;
                     }
                 }
             }
