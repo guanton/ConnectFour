@@ -20,7 +20,8 @@ public class ConsoleCF extends CFGame{
     public ConsoleCF(CFPlayer ai1, CFPlayer ai2){
         player1=ai1;
         player2=ai2;
-        red = 0;
+        Random rand= new Random();
+        red = rand.nextInt(2);//generate random int bt 0 and 1
     }
 
     public void playOut(){
@@ -28,7 +29,6 @@ public class ConsoleCF extends CFGame{
         while (!this.isGameOver()){
             if (red==0){//player one is red, goes first
                 this.play(player1.nextMove(this));
-                System.out.println(this.minimax(this.state, true, 3));
                 this.play(player2.nextMove(this));}
 
 
@@ -38,6 +38,7 @@ public class ConsoleCF extends CFGame{
 
         }
         System.out.println("Game over!");
+        System.out.println(this.getWinner() + " won!");
     }
 
     public String getWinner(){

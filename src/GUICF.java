@@ -54,13 +54,10 @@ public class GUICF extends CFGame {
         playButton = new JButton("Play");
         playButton.addActionListener(new ButtonListener(true, -1));
 
-        if (Math.random() < 0.5) {
-            redPlayer = ai1;
-            blackPlayer = ai2;
-        } else {
-            redPlayer = ai2;
-            blackPlayer = ai1;
-        }
+
+        redPlayer = ai1;
+        blackPlayer = ai2;
+
         displayBoard();
     }
 
@@ -88,10 +85,13 @@ public class GUICF extends CFGame {
         if (g.isGameOver()) {
             if (g.winner() == -1)
                 gameOverLabel.setText(blackPlayer.getName() + " (black)" + " won!");
+            if (g.winner()== 1 && Human)
+                gameOverLabel.setText("Human player (red) won!");
+            if (g.winner()==1) {
+                gameOverLabel.setText(redPlayer.getName() + " (red)" + " won!");
+            }
             if (g.winner() == 0)
                 gameOverLabel.setText("It's a draw!");
-            if (g.winner()== 1)
-                gameOverLabel.setText("Human player (red) won!");
         }
     }
 
@@ -186,7 +186,7 @@ public class GUICF extends CFGame {
     }
 
     public static void main(String[] args) {
-        GUICF guiGame = new GUICF(new minimaxAI());
+        GUICF guiGame = new GUICF(new myAI(), new minimaxAI());
     }
 
 }
