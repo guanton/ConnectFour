@@ -1,4 +1,3 @@
-
 import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -16,12 +15,13 @@ public class GUICF extends CFGame {
     private CFPlayer blackPlayer;
     private JButton[] buttons;
     private JButton playButton;
+    private JButton newGame;
     private JLabel[][] squares;
-    private boolean Human;
+    protected boolean Human;
     private JLabel gameOverLabel;
 
-    //initialization
-    {
+    //initialization for both constructors
+    public void init(){
         buttons = new JButton[7];
         for (int i = 0; i < 7; i++) {
             //down arrow buttons for each column
@@ -39,25 +39,33 @@ public class GUICF extends CFGame {
     }
 
     public GUICF(CFPlayer ai) {
+        init();
         //sets up and starts a human vs. AI game
         g = new CFGame();
         blackPlayer = ai;
         Human = true;
+        newGame = new JButton("New Game");
+        newGame.addActionListener(new ButtonListener1());
         displayBoard();
     }
 
     public GUICF(CFPlayer ai1, CFPlayer ai2) {
+        init();
         //sets up and starts an AI vs. AI game
         g = new CFGame();
         Human = false;
-
         playButton = new JButton("Play");
-        playButton.addActionListener(new ButtonListener(true, -1));
+        playButton.addActionListener(new ButtonListener(-1));
+        newGame = new JButton("New Game");
+        newGame.addActionListener(new ButtonListener1());
 
-
-        redPlayer = ai1;
-        blackPlayer = ai2;
-
+        if (Math.random() < 0.5) {
+            redPlayer = ai1;
+            blackPlayer = ai2;
+        } else {
+            redPlayer = ai2;
+            blackPlayer = ai1;
+        }
         displayBoard();
     }
 
@@ -66,7 +74,7 @@ public class GUICF extends CFGame {
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this_board = new GameBoard();
         frame.getContentPane().add(this_board);
-        frame.setSize(800, 600);
+        frame.setSize(1500, 1000);
         frame.setVisible(true);
         this_board.setVisible(true);
     }
@@ -85,13 +93,10 @@ public class GUICF extends CFGame {
         if (g.isGameOver()) {
             if (g.winner() == -1)
                 gameOverLabel.setText(blackPlayer.getName() + " (black)" + " won!");
-            if (g.winner()== 1 && Human)
-                gameOverLabel.setText("Human player (red) won!");
-            if (g.winner()==1) {
-                gameOverLabel.setText(redPlayer.getName() + " (red)" + " won!");
-            }
             if (g.winner() == 0)
                 gameOverLabel.setText("It's a draw!");
+            if (g.winner()== 1)
+                gameOverLabel.setText("Human player (red) won!");
         }
     }
 
@@ -132,7 +137,7 @@ public class GUICF extends CFGame {
 
             // make top row buttons
             for(int i = 0; i < 7; i++){
-                buttons[i].addActionListener(new ButtonListener(false, i));
+                buttons[i].addActionListener(new ButtonListener( i));
                 this.add(buttons[i]);
             }
             for(int row = 5; row >= 0; row--){
@@ -151,10 +156,22 @@ public class GUICF extends CFGame {
         }
     }
 
+    public class ButtonListener1 implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+            if (Human) {
+                g = new CFGame();
+            } else {
+                g = new CFGame();
+            }
+        }
+
+    }
+
     public class ButtonListener implements ActionListener {
         int column;
 
-        ButtonListener(boolean p, int c) {
+        ButtonListener(int c) {
             column = c;
         }
 
@@ -186,7 +203,7 @@ public class GUICF extends CFGame {
     }
 
     public static void main(String[] args) {
-        GUICF guiGame = new GUICF(new myAI(), new minimaxAI());
+        GUICF guiGame = new GUICF(new minimaxAI());
     }
 
 }

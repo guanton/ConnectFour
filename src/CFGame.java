@@ -174,8 +174,8 @@ public class CFGame {
         for (int p: players) {
 
             //loop for horizontal check
-            for (int i=0;i<4;i++){
-                for (int j=0;j<=2;j++){
+            for (int i=0;i<=3;i++){
+                for (int j=0;j<6;j++){
                     if (this.hCheck(p, i, j)){
                         return p;
                     }
