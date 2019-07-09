@@ -231,7 +231,7 @@ public class CFGame {
                     Number[] arr = {Double.POSITIVE_INFINITY, lastColPlayed};
                     return Arrays.asList(arr);
                 } else if (c.winner()==0){
-                    Number[] arr = {0, lastColPlayed};
+                    Number[] arr = {0.001, lastColPlayed};
                     return Arrays.asList(arr);
                 }
             }
