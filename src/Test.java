@@ -4,7 +4,7 @@ public class Test {
 
         CFPlayer ai1 = new myAI();
         CFPlayer ai2 = new RandomAI();
-        int n = 1;
+        int n = 5;
         int winCount = 0;
         for (int i=0; i<n; i++) {
             ConsoleCF game = new ConsoleCF(ai1, ai2); game.playOut();

@@ -6,15 +6,15 @@ public class CFGame {
     //state[i][j]=-1 means the i,j slot is filled by black
     protected int[][] state;
     protected boolean isRedTurn;
-    private Map<int[][], Integer> minimaxLookup;
+    private Map<Double, Integer> minimaxLookup;
 
-    //initialize the board (7 columns, 6 rows)
-    {
+    public CFGame() {
         state = new int[7][6];
         for (int i=0; i<7; i++)
             for (int j=0; j<6; j++)
                 state[i][j] = 0;
         isRedTurn = true; //red goes first
+        minimaxLookup = new HashMap<>();
     }
 
     //return the board state
@@ -210,18 +210,20 @@ public class CFGame {
         //make copy of board
         CFGame c = new CFGame();
         c.setState(state);
-        //whose turn is it?
-        c.setRedTurn(maximizingPlayer);
-        //if the board state represents a finished state or if n==0 (BASE CASE)
+        //whose turn is it? since black is maximizingPlayer, red is the opposite
+        c.setRedTurn(!maximizingPlayer);
+        //if the board state represents a finished game or if n==0 (BASE CASE)
         if (c.isGameOver() || n==0) {
-            if (c.winner()==1) {
-                //black player lost
-                return Double.NEGATIVE_INFINITY;
-            } else if (c.winner()==-1) {
-                //black player won
-                return Double.POSITIVE_INFINITY;
-            } else if (c.winner()==0){
-                return 0;
+            if (c.isGameOver()) {
+                if (c.winner()==-1) {
+                    //black player lost
+                    return Double.NEGATIVE_INFINITY;
+                } else if (c.winner()==1) {
+                    //black player won
+                    return Double.POSITIVE_INFINITY;
+                } else if (c.winner()==0){
+                    return 0;
+                }
             }
             if (n==0) {
                 return 1;
@@ -238,10 +240,14 @@ public class CFGame {
                 game.play(x);
                 nextGames.add(game);
             }
-            for (CFGame g: nextGames) {
+            for (int x = 0; x<7; x++) {
+                CFGame g = nextGames.get(x);
                 double child = minimax(g.getState(), false, n-1);
                 System.out.println("Child score: " + child);
                 nextScores.add(child);
+                if (n==3) {
+                    minimaxLookup.put(child,x);
+                }
             }
             //return the best of these 7 scores
             return Collections.max(nextScores);
@@ -257,6 +263,7 @@ public class CFGame {
                 double child = minimax(g.getState(), true, n-1);
                 nextScores.add(child);
             }
+            System.out.println("here: " + minimaxLookup);
             return Collections.min(nextScores);
         }
     }
