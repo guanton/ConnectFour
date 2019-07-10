@@ -7,16 +7,12 @@ public class minimaxAI implements CFPlayer{
 
     @Override
     public int nextMove(CFGame g) {
-
-
-
-
         int[][] s = g.getState();
         List<Integer> start = new ArrayList<>();
         for (int y=0; y<6; y++) {
             start.add(s[3][y]);
         }
-        if (!start.contains(1) && !start.contains(-1)) {
+        if (!start.contains(-1)) {
             return 3;
         }
         List<Integer> start1 = new ArrayList<>();
