@@ -91,6 +91,7 @@ public class GUICF extends CFGame {
             this_board.paint(c, row, 1); // red just played so label must be red
         //check winner
         if (g.isGameOver()) {
+            gameOverLabel.setVisible(true);
             if (g.winner() == -1)
                 gameOverLabel.setText(blackPlayer.getName() + " (black)" + " won!");
             if (g.winner() == 0)
@@ -116,7 +117,7 @@ public class GUICF extends CFGame {
     private class GameBoard extends javax.swing.JPanel {
         private GameBoard() {
             //initialize empty board with extra row for buttons
-            this.setLayout(new GridLayout(8,7));
+            this.setLayout(new GridLayout(9,7));
 
             //make row with only Play button (or no play button if there is no human)
             gameOverLabel = new JLabel();
@@ -135,6 +136,7 @@ public class GUICF extends CFGame {
                 }
             }
 
+
             // make top row buttons
             for(int i = 0; i < 7; i++){
                 buttons[i].addActionListener(new ButtonListener( i));
@@ -143,6 +145,10 @@ public class GUICF extends CFGame {
             for(int row = 5; row >= 0; row--){
                 for(int col = 0; col < 7; col++){
                     this.add(squares[col][row]);
+                }
+                if (row==0) {
+                    newGame.addActionListener(new ButtonListener1());
+                    this.add(newGame);
                 }
             }
         }
@@ -154,14 +160,26 @@ public class GUICF extends CFGame {
             if (color == -1)
                 squares[column][row].setBackground(Color.BLACK);
         }
+        private void paintstart() {
+            for(int row = 5; row >= 0; row--){
+                for(int col = 0; col < 7; col++){
+                    squares[col][row].setBackground(Color.WHITE);
+                }
+            }
+
+        }
     }
 
     public class ButtonListener1 implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
             if (Human) {
+                this_board.paintstart();
+                gameOverLabel.setVisible(false);
                 g = new CFGame();
             } else {
+                this_board.paintstart();
+                gameOverLabel.setVisible(false);
                 g = new CFGame();
             }
         }
