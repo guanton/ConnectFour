@@ -9,7 +9,7 @@ I did this by making a simple "smart" AI that will always play a winning move if
 a losing move if possible. This AI beat the random AI about 91% of the time.
 
 However, my goal was to make an even stronger AI using minimax with alpha-beta pruning (to make the program faster). 
-My minimaxAI beats the random AI 100% of the time. 
+As it stands, my minimaxAI beats the random AI 100% of the time (rounded to nearest hundredth), and it beats the "smart" AI 97% of the time.
 
 I think that doing this simple project will be very helpful for my chess project. I developped my skills in:
 
