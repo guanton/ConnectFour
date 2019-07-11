@@ -46,7 +46,7 @@ public class minimaxAI implements CFPlayer{
             }
         }
         //regular
-        return (int) g.minimax(g.getState(), true, 5, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY).get(1);
+        return (int) g.minimax(g.getState(), true, 6, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY).get(1);
     }
 
     @Override

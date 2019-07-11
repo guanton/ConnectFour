@@ -74,7 +74,7 @@ public class GUICF extends CFGame {
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this_board = new GameBoard();
         frame.getContentPane().add(this_board);
-        frame.setSize(1500, 1000);
+        frame.setSize(800, 600);
         frame.setVisible(true);
         this_board.setVisible(true);
     }

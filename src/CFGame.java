@@ -433,7 +433,7 @@ public class CFGame {
                 //black plays same column and wins the game
                 if (c.play(x)) {
                     if (c.isGameOver() && c.winner()==-1) {
-                        score=score+1000;
+                        score=score+10000;
                     }
                 }
             }
@@ -448,7 +448,7 @@ public class CFGame {
                 //red plays the same column
                 if (c.play(x)) {
                     if (c.isGameOver() && c.winner()==1) {
-                        score=score-1000;
+                        score=score-10000;
                     }
                 }
             }
