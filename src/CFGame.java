@@ -252,7 +252,7 @@ public class CFGame {
             }
             //BASE CASE
             if (n==0) {
-                Number[] arr = {this.evaluateState(), lastColPlayed};
+                Number[] arr = {evaluateState(state), lastColPlayed};
                 return Arrays.asList(arr);
             }
         }
@@ -262,8 +262,7 @@ public class CFGame {
             //copy of game where it is black's turn
             CFGame game_ = new CFGame();
             game_.setRedTurn(false);
-            Random r= new Random();
-            int col=r.nextInt(7);
+            int col=3;
             //first, pick a random column, if nothing better is found
             //then this column will be played
             //now we see if there are any better moves
@@ -291,6 +290,7 @@ public class CFGame {
                 return Arrays.asList(arr);
             } else {
                 boolean illegal=true;
+                Random r = new Random();
                 while (illegal) {
                     int newcol = r.nextInt(7);
                     if (c_.playable(newcol)) {
@@ -305,7 +305,7 @@ public class CFGame {
             //copy of game where it is red's turn
             CFGame game_ = new CFGame();
             game_.setRedTurn(true);
-            int col=0;
+            int col=3;
             //now we see if there are any better moves
             for (int x = 0; x < 7; x++) {
                 //make a copy of the board
@@ -345,8 +345,35 @@ public class CFGame {
         return Arrays.asList(arr);
     }
 
-    public double evaluateState() {
-        return Math.random()*5.0;
+    public double evaluateState(int[][] state) {
+        double score=Math.random();
+        for (int j=0; j<6;j++) {
+            for (int i=2; i<=4; i++) {
+                if (state[i][j]==-1) {
+                    score=score+5;
+                } else if (state[i][j]==-1) {
+                    score=score-3;
+                }
+            }
+        }
+        for (int j=0; j<4;j++) {
+            if (state[2][j]==-1 && state[3][j]==-1 && state[4][j]==-1) {
+                score=score+20;
+            }
+            if (state[2][j]==1 && state[3][j]==1 && state[4][j]==1) {
+                score=score-20;
+            }
+            if (state[2][2]==-1 && state[3][2]==-1 && state[4][2]==-1) {
+                score=score+100;
+            }
+            if (state[2][2]==1 && state[3][2]==1 && state[4][2]==1) {
+                score=score-100;
+            }
+
+
+        }
+
+        return score;
     }
 
 }
