@@ -40,6 +40,16 @@ public class CFGame {
         return isRedTurn;
     }
 
+    public boolean playable(int column) {
+
+        for (int j=0;j<6;j++){
+            if (state[column][j]==0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     //play the chip in the desired column
     public boolean play(int column) {
 
@@ -218,9 +228,12 @@ public class CFGame {
     public List<Number> minimax(int[][] state, boolean maximizingPlayer, int n, double alpha, double beta) {
         //make copy of the board that represents "state"
         CFGame c = new CFGame();
+        CFGame c_= new CFGame();
         c.setState(state);
+        c_.setState(state);
         //whose turn is it? since black is maximizingPlayer, red is the opposite
         c.setRedTurn(!maximizingPlayer);
+        c_.setRedTurn(!maximizingPlayer);
         //if the board state represents a finished game or if n==0 (BASE CASE)
         if (c.isGameOver() || n==0) {
             if (c.isGameOver()) {
@@ -252,15 +265,6 @@ public class CFGame {
             int col=0;
             //first, pick a random column, if nothing better is found
             //then this column will be played
-            Random r = new Random();
-            boolean illegal=true;
-            while (illegal) {
-                int j = r.nextInt(7);
-                if (game_.play(j)) {
-                    col=j;
-                    illegal=false;
-                }
-            }
             //now we see if there are any better moves
             for (int x = 0; x < 7; x++) {
                 //make a copy of the board
@@ -279,10 +283,24 @@ public class CFGame {
                     if (beta<=alpha) {
                         break;
                     }
+                } else {
+                    continue;
                 }
             }
-            Number[] arr = {maxVal, col};
-            return Arrays.asList(arr);
+            if (c_.playable(col)) {
+                Number[] arr = {maxVal, col};
+                return Arrays.asList(arr);
+            } else {
+                boolean illegal=true;
+                Random r = new Random();
+                while (illegal) {
+                    int newcol = r.nextInt(7);
+                    if (c_.playable(newcol)) {
+                        Number[] arr = {maxVal, newcol};
+                        return Arrays.asList(arr);
+                    }
+                }
+            }
         } else {
             //initially, assume the worst (for red), which means that Black wins
             double minVal = Double.POSITIVE_INFINITY;
@@ -290,17 +308,6 @@ public class CFGame {
             CFGame game_ = new CFGame();
             game_.setRedTurn(true);
             int col=0;
-            //first, pick a random column, if nothing better is found
-            //then this column will be played
-            Random r = new Random();
-            boolean illegal=true;
-            while (illegal) {
-                int j = r.nextInt(7);
-                if (game_.play(j)) {
-                    col=j;
-                    illegal=false;
-                }
-            }
             //now we see if there are any better moves
             for (int x = 0; x < 7; x++) {
                 //make a copy of the board
@@ -319,11 +326,27 @@ public class CFGame {
                     if (beta<=alpha) {
                         break;
                     }
+                } else {
+                    continue;
                 }
             }
-            Number[] arr = {minVal, col};
-            return Arrays.asList(arr);
+            if (c_.playable(col)) {
+                Number[] arr = {minVal, col};
+                return Arrays.asList(arr);
+            } else {
+                boolean illegal=true;
+                Random r = new Random();
+                while (illegal) {
+                    int newcol = r.nextInt(7);
+                    if (c_.playable(newcol)) {
+                        Number[] arr = {minVal, newcol};
+                        return Arrays.asList(arr);
+                    }
+                }
+            }
         }
+        Number[] arr = {0, 0};
+        return Arrays.asList(arr);
     }
 
     public double evaluateState() {
