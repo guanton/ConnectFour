@@ -1,3 +1,4 @@
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class CFGame {
@@ -299,7 +300,7 @@ public class CFGame {
     }
 
     //returns a pair, first coordinate is the score of the move, second coordinate is the column played
-    public List<Number> minimax(int[][] state, boolean maximizingPlayer, int n, double alpha, double beta) {
+    public List<Number> minimax(int[][] state, boolean maximizingPlayer, int n, double alpha, double beta, boolean old) {
         //make copy of the board that represents "state"
         CFGame c = new CFGame();
         CFGame c_= new CFGame();
@@ -326,8 +327,13 @@ public class CFGame {
             }
             //BASE CASE
             if (n==0) {
-                Number[] arr = {evaluateState(state), lastColPlayed};
-                return Arrays.asList(arr);
+                if (!old) {
+                    Number[] arr = {evaluateState(state), lastColPlayed};
+                    return Arrays.asList(arr);
+                } else {
+                    Number[] arr = {oldEvaluateState(state), lastColPlayed};
+                    return Arrays.asList(arr);
+                }
             }
         }
         if (maximizingPlayer) {
@@ -348,7 +354,7 @@ public class CFGame {
                 //consider the move, if valid
                 if (game.play(x)) {
                     //retrieve its score recursively
-                    double currVal = (double) minimax(game.getState(), false, n-1, alpha, beta).get(0);
+                    double currVal = (double) minimax(game.getState(), false, n-1, alpha, beta, old).get(0);
                     if ((double) currVal>maxVal) {
                         maxVal= (double) currVal;
                         col = x;
@@ -389,7 +395,7 @@ public class CFGame {
                 //consider the move, if valid
                 if (game.play(x)) {
                     //retrieve its score recursively
-                    double currVal = (double) minimax(game.getState(), true, n-1, alpha, beta).get(0);
+                    double currVal = (double) minimax(game.getState(), true, n-1, alpha, beta, old).get(0);
                     if ((double) currVal<minVal) {
                         minVal= (double) currVal;
                         col = x;
@@ -524,6 +530,11 @@ public class CFGame {
             }
         }
 
+        return score;
+    }
+
+    public double oldEvaluateState(int[][] state) {
+        double score=Math.random();
         return score;
     }
 

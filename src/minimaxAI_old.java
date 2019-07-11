@@ -3,7 +3,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class minimaxAI implements CFPlayer{
+public class minimaxAI_old implements CFPlayer{
 
     @Override
     public int nextMove(CFGame g) {
@@ -46,11 +46,11 @@ public class minimaxAI implements CFPlayer{
             }
         }
         //regular
-        return (int) g.minimax(g.getState(), true, 4, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, false).get(1);
+        return (int) g.minimax(g.getState(), true, 6, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, true).get(1);
     }
 
     @Override
     public String getName() {
-        return "minimaxAI";
+        return "minimaxAI(old)";
     }
 }

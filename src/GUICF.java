@@ -158,11 +158,12 @@ public class GUICF extends CFGame {
         }
 
         private void paint(int column, int row, int color) {
+            Color yellow = new Color(255, 220, 0);
             //paints specified coordinate red or black
             if (color == 1)
                 squares[column][row].setBackground(Color.RED);
             if (color == -1)
-                squares[column][row].setBackground(Color.BLACK);
+                squares[column][row].setBackground(yellow);
         }
         private void paintstart() {
             for(int row = 5; row >= 0; row--){
@@ -227,7 +228,7 @@ public class GUICF extends CFGame {
     }
 
     public static void main(String[] args) {
-        GUICF guiGame = new GUICF(new minimaxAI(), new myAI());
+        GUICF guiGame = new GUICF(new minimaxAI());
     }
 
 }

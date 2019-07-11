@@ -2,9 +2,9 @@
 public class Test {
     public static void main(String[] args) {
 
-        CFPlayer ai1 = new RandomAI();
-        CFPlayer ai2 = new myAI();
-        int n = 500;
+        CFPlayer ai1 = new minimaxAI_old();
+        CFPlayer ai2 = new minimaxAI();
+        int n = 250;
         int winCount = 0;
         for (int i=0; i<n; i++) {
             ConsoleCF game = new ConsoleCF(ai1, ai2); game.playOut();
