@@ -262,7 +262,8 @@ public class CFGame {
             //copy of game where it is black's turn
             CFGame game_ = new CFGame();
             game_.setRedTurn(false);
-            int col=0;
+            Random r= new Random();
+            int col=r.nextInt(7);
             //first, pick a random column, if nothing better is found
             //then this column will be played
             //now we see if there are any better moves
@@ -283,8 +284,6 @@ public class CFGame {
                     if (beta<=alpha) {
                         break;
                     }
-                } else {
-                    continue;
                 }
             }
             if (c_.playable(col)) {
@@ -292,7 +291,6 @@ public class CFGame {
                 return Arrays.asList(arr);
             } else {
                 boolean illegal=true;
-                Random r = new Random();
                 while (illegal) {
                     int newcol = r.nextInt(7);
                     if (c_.playable(newcol)) {
@@ -326,8 +324,6 @@ public class CFGame {
                     if (beta<=alpha) {
                         break;
                     }
-                } else {
-                    continue;
                 }
             }
             if (c_.playable(col)) {
