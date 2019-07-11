@@ -150,8 +150,42 @@ public class CFGame {
         }
     }
 
-    public boolean vCheck ( int p, int i, int j){
+    public boolean hCheck3 (int[][] state, int p, int i, int j){
+        int count=0;
+        int zeros=0;
+        for (int x=i; x<i+4;x++) {
+            if (state[x][j]==p) {
+                count++;
+            } else if (state[x][j]==0) {
+                zeros++;
+            }
+        }
+        if (count==3 && zeros==1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean vCheck (int p, int i, int j){
         if (state[i][j] == p && state[i][j + 1] == p && state[i][j + 2] == p && state[i][j + 3] == p) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean vCheck3 (int[][] state, int p, int i, int j){
+        int count=0;
+        int zeros=0;
+        for (int y=j; y<j+4;y++) {
+            if (state[i][y]==p) {
+                count++;
+            } else if (state[i][y]==0) {
+                zeros++;
+            }
+        }
+        if (count==3 && zeros==1) {
             return true;
         } else {
             return false;
@@ -166,8 +200,48 @@ public class CFGame {
         }
     }
 
+    public boolean RdCheck3 (int[][] state, int p, int i, int j) {
+        int count=0;
+        int zeros=0;
+        for (int x=i; x<i+4;x++) {
+            for (int y=j; y<j+4;y++) {
+                if (state[x][y]==p) {
+                    count++;
+                } else if (state[x][y]==0) {
+                    zeros++;
+                }
+            }
+        }
+        if (count==3 && zeros==1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+
     public boolean LdCheck ( int p, int i, int j) {
         if (state[i][j] == p && state[i - 1][j + 1] == p && state[i - 2][j + 2] == p && state[i - 3][j + 3] == p) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean LdCheck3 (int[][] state, int p, int i, int j) {
+        int count=0;
+        int zeros=0;
+        for (int x=i; x>i-4;x--) {
+            for (int y=j; y<j+4;y++) {
+                if (state[x][y]==p) {
+                    count++;
+                } else if (state[x][y]==0) {
+                    zeros++;
+                }
+            }
+        }
+        if (count==3 && zeros==1) {
             return true;
         } else {
             return false;
@@ -346,8 +420,42 @@ public class CFGame {
     }
 
     public double evaluateState(int[][] state) {
+        //some noise between 0-1
         double score=Math.random();
-        for (int j=0; j<6;j++) {
+
+        //if red's move allows black to win on the next turn, add 1000 points
+        for (int x=0; x<7; x++) {
+            CFGame c = new CFGame();
+            c.setState(state);
+            c.setRedTurn(true);
+            //red plays column x
+            if (c.play(x)) {
+                //black plays same column and wins the game
+                if (c.play(x)) {
+                    if (c.isGameOver() && c.winner()==-1) {
+                        score=score+1000;
+                    }
+                }
+            }
+        }
+        //if black's move allows red to win on the next turn, deduct 1000 points
+        for (int x=0; x<7; x++) {
+            CFGame c = new CFGame();
+            c.setState(state);
+            c.setRedTurn(false);
+            //black plays column x
+            if (c.play(x)) {
+                //red plays the same column
+                if (c.play(x)) {
+                    if (c.isGameOver() && c.winner()==1) {
+                        score=score-1000;
+                    }
+                }
+            }
+        }
+
+        //award positioning points accordingly (center spots are valued)
+        for (int j=0; j<4;j++) {
             for (int i=2; i<=4; i++) {
                 if (state[i][j]==-1) {
                     score=score+5;
@@ -356,21 +464,64 @@ public class CFGame {
                 }
             }
         }
-        for (int j=0; j<4;j++) {
-            if (state[2][j]==-1 && state[3][j]==-1 && state[4][j]==-1) {
-                score=score+20;
-            }
-            if (state[2][j]==1 && state[3][j]==1 && state[4][j]==1) {
-                score=score-20;
-            }
-            if (state[2][2]==-1 && state[3][2]==-1 && state[4][2]==-1) {
-                score=score+100;
-            }
-            if (state[2][2]==1 && state[3][2]==1 && state[4][2]==1) {
-                score=score-100;
+
+        //check for threats of 3
+        List<Integer> players = new ArrayList <Integer>();
+        players.add(1);
+        players.add(-1);
+        for (int p: players) {
+
+            //loop for horizontal check
+            for (int i = 0; i <= 3; i++) {
+                for (int j = 0; j < 6; j++) {
+                    if (this.hCheck3(state, p, i, j)) {
+                        if (p == 1) {
+                            score = score - 500;
+                        } else {
+                            score = score + 500;
+                        }
+                    }
+                }
             }
 
+            //loop for vertical  check
+            for (int i = 0; i < 7; i++) {
+                for (int j = 0; j <= 2; j++) {
+                    if (this.vCheck3(state, p, i, j)) {
+                        if (p == 1) {
+                            score = score - 500;
+                        } else {
+                            score = score + 500;
+                        }
+                    }
+                }
+            }
 
+            //loop for rightward diagonal check
+            for (int i = 0; i <= 3; i++) {
+                for (int j = 0; j <= 2; j++) {
+                    if (this.RdCheck3(state, p, i, j)) {
+                        if (p == 1) {
+                            score = score - 500;
+                        } else {
+                            score = score + 500;
+                        }
+                    }
+                }
+            }
+
+            //loop for leftward diagonal check
+            for (int i = 6; i >= 3; i--) {
+                for (int j = 0; j <= 2; j++) {
+                    if (this.LdCheck3(state, p, i, j)) {
+                        if (p == 1) {
+                            score = score - 500;
+                        } else {
+                            score = score + 500;
+                        }
+                    }
+                }
+            }
         }
 
         return score;
