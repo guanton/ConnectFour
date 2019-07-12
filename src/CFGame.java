@@ -1,3 +1,5 @@
+import org.omg.CORBA.INTERNAL;
+
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -7,8 +9,9 @@ public class CFGame {
     //state[i][j]=-1 means the i,j slot is filled by black
     protected int[][] state;
     protected boolean isRedTurn;
-    private Map<Double, Integer> minimaxLookup;
     protected int lastColPlayed;
+    Set<Pair>blackthreatspots;
+    Set<Pair> redthreatspots;
 
     public CFGame() {
         state = new int[7][6];
@@ -16,12 +19,16 @@ public class CFGame {
             for (int j=0; j<6; j++)
                 state[i][j] = 0;
         isRedTurn = true; //red goes first
-        minimaxLookup = new HashMap<>();
+        blackthreatspots = new HashSet<>();
+        redthreatspots = new HashSet<>();
     }
 
-    //return the minimax Map
-    public Map<Double, Integer> getMinimaxLookup() {
-        return minimaxLookup;
+    public Set<Pair> getBlackthreatspots() {
+        return blackthreatspots;
+    }
+
+    public Set<Pair> getRedthreatspots() {
+        return redthreatspots;
     }
 
     //return the board state
@@ -151,17 +158,24 @@ public class CFGame {
         }
     }
 
-    public boolean hCheck3 (int[][] state, int p, int i, int j){
+    public boolean hCheck3 (int[][] state, int p, int i, int j, CFGame g){
         int count=0;
         int zeros=0;
+        int zeroCol=0;
         for (int x=i; x<i+4;x++) {
             if (state[x][j]==p) {
                 count++;
             } else if (state[x][j]==0) {
                 zeros++;
+                zeroCol=x;
             }
         }
         if (count==3 && zeros==1) {
+            if (p==1) {
+                g.getRedthreatspots().add(new Pair(zeroCol, j));
+            } else {
+                g.getBlackthreatspots().add(new Pair(zeroCol, j));
+            }
             return true;
         } else {
             return false;
@@ -176,17 +190,24 @@ public class CFGame {
         }
     }
 
-    public boolean vCheck3 (int[][] state, int p, int i, int j){
+    public boolean vCheck3 (int[][] state, int p, int i, int j, CFGame g){
         int count=0;
         int zeros=0;
+        int zeroRow=0;
         for (int y=j; y<j+4;y++) {
             if (state[i][y]==p) {
                 count++;
             } else if (state[i][y]==0) {
+                zeroRow=y;
                 zeros++;
             }
         }
         if (count==3 && zeros==1) {
+            if (p==1) {
+                g.getRedthreatspots().add(new Pair(i,zeroRow));
+            } else {
+                g.getBlackthreatspots().add(new Pair(i, zeroRow));
+            }
             return true;
         } else {
             return false;
@@ -201,19 +222,28 @@ public class CFGame {
         }
     }
 
-    public boolean RdCheck3 (int[][] state, int p, int i, int j) {
+    public boolean RdCheck3 (int[][] state, int p, int i, int j, CFGame g) {
         int count=0;
         int zeros=0;
+        int zeroCol=0;
+        int zeroRow=0;
         for (int x=i; x<i+4;x++) {
             for (int y=j; y<j+4;y++) {
                 if (state[x][y]==p) {
                     count++;
                 } else if (state[x][y]==0) {
+                    zeroCol=x;
+                    zeroRow=y;
                     zeros++;
                 }
             }
         }
         if (count==3 && zeros==1) {
+            if (p==1) {
+                g.getRedthreatspots().add(new Pair(zeroCol, zeroRow));
+            } else {
+                g.getBlackthreatspots().add(new Pair(zeroCol, zeroRow));
+            }
             return true;
         } else {
             return false;
@@ -230,19 +260,28 @@ public class CFGame {
         }
     }
 
-    public boolean LdCheck3 (int[][] state, int p, int i, int j) {
+    public boolean LdCheck3 (int[][] state, int p, int i, int j, CFGame g) {
         int count=0;
         int zeros=0;
+        int zeroCol=0;
+        int zeroRow=0;
         for (int x=i; x>i-4;x--) {
             for (int y=j; y<j+4;y++) {
                 if (state[x][y]==p) {
                     count++;
                 } else if (state[x][y]==0) {
+                    zeroCol=x;
+                    zeroRow=y;
                     zeros++;
                 }
             }
         }
         if (count==3 && zeros==1) {
+            if (p==1) {
+                g.getRedthreatspots().add(new Pair(zeroCol, zeroRow));
+            } else {
+                g.getBlackthreatspots().add(new Pair(zeroCol, zeroRow));
+            }
             return true;
         } else {
             return false;
@@ -428,17 +467,27 @@ public class CFGame {
     public double evaluateState(int[][] state) {
         //some noise between 0-1
         double score=Math.random();
+        CFGame c__= new CFGame();
 
         //if red's move allows black to win on the next turn, add 1000 points
         for (int x=0; x<7; x++) {
             CFGame c = new CFGame();
+            CFGame c_=new CFGame();
             c.setState(state);
             c.setRedTurn(true);
+            c_.setState(state);
+            c_.setRedTurn(true);
             //red plays column x
             if (c.play(x)) {
+                if (c.isGameOver()) {
+                    //red can win
+                    if (c.winner()==1) {
+                        score = score-1000000;
+                    }
+                }
                 //black plays same column and wins the game
-                if (c.play(x)) {
-                    if (c.isGameOver() && c.winner()==-1) {
+                if (c_.play(x)) {
+                    if (c_.isGameOver() && c_.winner()==-1) {
                         score=score+10000;
                     }
                 }
@@ -447,13 +496,19 @@ public class CFGame {
         //if black's move allows red to win on the next turn, deduct 1000 points
         for (int x=0; x<7; x++) {
             CFGame c = new CFGame();
+            CFGame c_= new CFGame();
             c.setState(state);
             c.setRedTurn(false);
+            c_.setState(state);
+            c_.setRedTurn(false);
             //black plays column x
             if (c.play(x)) {
+                if (c.isGameOver() && c.winner()==-1) {
+                    score=score+800000;
+                }
                 //red plays the same column
-                if (c.play(x)) {
-                    if (c.isGameOver() && c.winner()==1) {
+                if (c_.play(x)) {
+                    if (c_.isGameOver() && c.winner()==1) {
                         score=score-10000;
                     }
                 }
@@ -464,9 +519,9 @@ public class CFGame {
         for (int j=0; j<4;j++) {
             for (int i=2; i<=4; i++) {
                 if (state[i][j]==-1) {
-                    score=score+5;
+                    score=score+500;
                 } else if (state[i][j]==-1) {
-                    score=score-3;
+                    score=score-300;
                 }
             }
         }
@@ -480,11 +535,19 @@ public class CFGame {
             //loop for horizontal check
             for (int i = 0; i <= 3; i++) {
                 for (int j = 0; j < 6; j++) {
-                    if (this.hCheck3(state, p, i, j)) {
+                    if (this.hCheck3(state, p, i, j, c__)) {
                         if (p == 1) {
                             score = score - 500;
                         } else {
                             score = score + 500;
+                        }
+                        if (i==2 && j==2) {
+                            if (p==1) {
+                                System.out.println("hey!");
+                                score=score-2000;
+                            } else {
+                                score=score+1500;
+                            }
                         }
                     }
                 }
@@ -493,7 +556,7 @@ public class CFGame {
             //loop for vertical  check
             for (int i = 0; i < 7; i++) {
                 for (int j = 0; j <= 2; j++) {
-                    if (this.vCheck3(state, p, i, j)) {
+                    if (this.vCheck3(state, p, i, j, c__)) {
                         if (p == 1) {
                             score = score - 500;
                         } else {
@@ -506,7 +569,7 @@ public class CFGame {
             //loop for rightward diagonal check
             for (int i = 0; i <= 3; i++) {
                 for (int j = 0; j <= 2; j++) {
-                    if (this.RdCheck3(state, p, i, j)) {
+                    if (this.RdCheck3(state, p, i, j, c__)) {
                         if (p == 1) {
                             score = score - 500;
                         } else {
@@ -519,7 +582,7 @@ public class CFGame {
             //loop for leftward diagonal check
             for (int i = 6; i >= 3; i--) {
                 for (int j = 0; j <= 2; j++) {
-                    if (this.LdCheck3(state, p, i, j)) {
+                    if (this.LdCheck3(state, p, i, j, c__)) {
                         if (p == 1) {
                             score = score - 500;
                         } else {
@@ -529,6 +592,28 @@ public class CFGame {
                 }
             }
         }
+
+
+        for (int x=0; x<7; x++) {
+            for (int y=0; y<5; y++) {
+                if (c__.getRedthreatspots().contains(new Pair(x,y))) {
+                    if (c__.getRedthreatspots().contains(new Pair(x,y+1))) {
+                        for (Pair p: c__.getRedthreatspots()) {
+                            System.out.println("("+ p.getFirst() + ", " + p.getSecond()+")");
+                        }
+                        score = -99999999999.9;
+                    }
+                }
+                if (c__.getBlackthreatspots().contains(new Pair(x,y))) {
+                    if (c__.getBlackthreatspots().contains(new Pair(x,y+1))) {
+                        score = 99999999999.9;
+                    }
+                }
+
+            }
+        }
+
+
 
         return score;
     }

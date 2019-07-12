@@ -93,7 +93,7 @@ public class GUICF extends CFGame {
         if (g.isGameOver()) {
             gameOverLabel.setVisible(true);
             if (g.winner() == -1)
-                gameOverLabel.setText(blackPlayer.getName() + " (black)" + " won!");
+                gameOverLabel.setText(blackPlayer.getName() + " (yellow)" + " won!");
             if (g.winner() == 0)
                 gameOverLabel.setText("It's a draw!");
             if (g.winner()== 1)
