@@ -3,7 +3,7 @@ public class Test {
     public static void main(String[] args) {
 
         CFPlayer ai1 = new minimaxAI();
-        CFPlayer ai2 = new RandomAI();
+        CFPlayer ai2 = new myAI();
         int n = 250;
         int winCount = 0;
         int draws = 0;

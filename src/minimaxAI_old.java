@@ -47,9 +47,9 @@ public class minimaxAI_old implements CFPlayer{
         }
         //regular
         if (!g.isRedTurn) {
-            return (int) g.minimax(g.getState(), true, 5, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, true).get(1);
+            return (int) g.minimax(g.getState(), true, 4, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, true).get(1);
         } else {
-            return (int) g.minimax(g.getState(), false, 5, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, true).get(1);
+            return (int) g.minimax(g.getState(), false, 4, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, true).get(1);
         }
     }
 

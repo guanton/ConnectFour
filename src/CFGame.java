@@ -182,6 +182,9 @@ public class CFGame {
         }
     }
 
+
+
+
     public boolean vCheck (int p, int i, int j){
         if (state[i][j] == p && state[i][j + 1] == p && state[i][j + 2] == p && state[i][j + 3] == p) {
             return true;
@@ -213,6 +216,7 @@ public class CFGame {
             return false;
         }
     }
+
 
     public boolean RdCheck ( int p, int i, int j) {
         if (state[i][j] == p && state[i + 1][j + 1] == p && state[i + 2][j + 2] == p && state[i + 3][j + 3] == p) {
@@ -287,6 +291,8 @@ public class CFGame {
             return false;
         }
     }
+
+
 
     //assume this is only called if the game is over
     public int winner() {
@@ -468,26 +474,19 @@ public class CFGame {
         //some noise between 0-1
         double score=Math.random();
         CFGame c__= new CFGame();
-
         //if red's move allows black to win on the next turn, add 1000 points
         for (int x=0; x<7; x++) {
             CFGame c = new CFGame();
-            CFGame c_=new CFGame();
             c.setState(state);
             c.setRedTurn(true);
-            c_.setState(state);
-            c_.setRedTurn(true);
             //red plays column x
             if (c.play(x)) {
-                if (c.isGameOver()) {
-                    //red can win
-                    if (c.winner()==1) {
-                        score = score-1000000;
-                    }
+                if (c.isGameOver() && c.winner()==1) {
+                    score=score-10000;
                 }
                 //black plays same column and wins the game
-                if (c_.play(x)) {
-                    if (c_.isGameOver() && c_.winner()==-1) {
+                if (c.play(x)) {
+                    if (c.isGameOver() && c.winner()==-1) {
                         score=score+10000;
                     }
                 }
@@ -496,19 +495,16 @@ public class CFGame {
         //if black's move allows red to win on the next turn, deduct 1000 points
         for (int x=0; x<7; x++) {
             CFGame c = new CFGame();
-            CFGame c_= new CFGame();
             c.setState(state);
             c.setRedTurn(false);
-            c_.setState(state);
-            c_.setRedTurn(false);
             //black plays column x
             if (c.play(x)) {
                 if (c.isGameOver() && c.winner()==-1) {
-                    score=score+800000;
+                    score=score+10000;
                 }
                 //red plays the same column
-                if (c_.play(x)) {
-                    if (c_.isGameOver() && c.winner()==1) {
+                if (c.play(x)) {
+                    if (c.isGameOver() && c.winner()==1) {
                         score=score-10000;
                     }
                 }
@@ -519,12 +515,19 @@ public class CFGame {
         for (int j=0; j<4;j++) {
             for (int i=2; i<=4; i++) {
                 if (state[i][j]==-1) {
-                    score=score+500;
+                    score=score+5;
                 } else if (state[i][j]==-1) {
-                    score=score-300;
+                    score=score-3;
                 }
             }
         }
+
+        //deterrent
+        if (state[2][2]==1 && state[3][2]==1 && state[4][2]==1) {
+            score=score-100;
+        }
+
+
 
         //check for threats of 3
         List<Integer> players = new ArrayList <Integer>();
@@ -543,7 +546,6 @@ public class CFGame {
                         }
                         if (i==2 && j==2) {
                             if (p==1) {
-                                System.out.println("hey!");
                                 score=score-2000;
                             } else {
                                 score=score+1500;
@@ -594,29 +596,11 @@ public class CFGame {
         }
 
 
-        for (int x=0; x<7; x++) {
-            for (int y=0; y<5; y++) {
-                if (c__.getRedthreatspots().contains(new Pair(x,y))) {
-                    if (c__.getRedthreatspots().contains(new Pair(x,y+1))) {
-                        for (Pair p: c__.getRedthreatspots()) {
-                            System.out.println("("+ p.getFirst() + ", " + p.getSecond()+")");
-                        }
-                        score = -99999999999.9;
-                    }
-                }
-                if (c__.getBlackthreatspots().contains(new Pair(x,y))) {
-                    if (c__.getBlackthreatspots().contains(new Pair(x,y+1))) {
-                        score = 99999999999.9;
-                    }
-                }
-
-            }
-        }
-
 
 
         return score;
     }
+
 
     public double oldEvaluateState(int[][] state) {
         double score=Math.random();
