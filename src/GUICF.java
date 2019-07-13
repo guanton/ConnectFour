@@ -154,6 +154,7 @@ public class GUICF extends CFGame {
             for(int row = 5; row >= 0; row--){
                 for(int col = 0; col < 7; col++){
                     this.add(squares[col][row]);
+                    squares[col][row].setBackground(Color.WHITE);
                 }
                 if (row==0) {
                     newGame.addActionListener(new ButtonListener1());
