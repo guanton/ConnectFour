@@ -1,17 +1,17 @@
 public class Pair {
-        private Integer first;
-        private Integer second;
+        private Number first;
+        private Number second;
 
-        public Pair(Integer first, Integer second) {
+        public Pair(Number first, Number second) {
             this.first = first;
             this.second = second;
         }
 
-        public Integer getFirst() {
+        public Number getFirst() {
             return first;
         }
 
-        public Integer getSecond() {
+        public Number getSecond() {
             return second;
         }
 

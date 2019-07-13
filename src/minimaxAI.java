@@ -7,6 +7,8 @@ public class minimaxAI implements CFPlayer{
 
     @Override
     public int nextMove(CFGame g) {
+        long startTime = System.nanoTime();
+
         //start
         int[][] s = g.getState();
         List<Integer> start = new ArrayList<>();
@@ -47,9 +49,11 @@ public class minimaxAI implements CFPlayer{
         }
         //regular
         if (!g.isRedTurn) {
-            return (int) g.minimax(g.getState(), true, 5, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, false).get(1);
+            long endTime = System.nanoTime();
+            return (int) g.minimax(g.getState(), true, 5, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, false).getSecond();
         } else {
-            return (int) g.minimax(g.getState(), false, 5, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, false).get(1);
+            long endTime = System.nanoTime();
+            return (int) g.minimax(g.getState(), false, 5, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, false).getSecond();
         }
     }
 

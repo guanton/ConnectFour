@@ -182,20 +182,21 @@ public class GUICF extends CFGame {
 
         }
         private void paintundo() {
-            int undocol = g.colsPlayed.getLast();
-            for(int row = 5; row >= 0; row--){
-                {
-                    if (g.state[undocol][row]!=0) {
-                        squares[undocol][row].setBackground(Color.WHITE);
-                        g.state[undocol][row]=0;
-                        g.setRedTurn(!g.isRedTurn());
-                        g.colsPlayed.removeLast();
-                        gameOverLabel.setVisible(false);
-                        break;
+            if (!g.colsPlayed.isEmpty()) {
+                int undocol = g.colsPlayed.getLast();
+                for(int row = 5; row >= 0; row--){
+                    {
+                        if (g.state[undocol][row]!=0) {
+                            squares[undocol][row].setBackground(Color.WHITE);
+                            g.state[undocol][row]=0;
+                            g.setRedTurn(!g.isRedTurn());
+                            g.colsPlayed.removeLast();
+                            gameOverLabel.setVisible(false);
+                            break;
+                        }
                     }
                 }
             }
-
         }
     }
 
