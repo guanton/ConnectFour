@@ -16,6 +16,7 @@ public class GUICF extends CFGame {
     private JButton[] buttons;
     private JButton playButton;
     private JButton newGame;
+    private JButton undo;
     private JLabel[][] squares;
     protected boolean Human;
     private JLabel gameOverLabel;
@@ -46,6 +47,8 @@ public class GUICF extends CFGame {
         Human = true;
         newGame = new JButton("New Game");
         newGame.addActionListener(new ButtonListener1());
+        undo = new JButton("Undo");
+        undo.addActionListener(new ButtonListenerUndo());
         displayBoard();
     }
 
@@ -58,6 +61,8 @@ public class GUICF extends CFGame {
         playButton.addActionListener(new ButtonListener(-1));
         newGame = new JButton("New Game");
         newGame.addActionListener(new ButtonListener1());
+        undo = new JButton("Undo");
+        undo.addActionListener(new ButtonListenerUndo());
 
         if (Math.random() <= 1) {
             redPlayer = ai1;
@@ -153,6 +158,8 @@ public class GUICF extends CFGame {
                 if (row==0) {
                     newGame.addActionListener(new ButtonListener1());
                     this.add(newGame);
+                    undo.addActionListener(new ButtonListenerUndo());
+                    this.add(undo);
                 }
             }
         }
@@ -173,6 +180,22 @@ public class GUICF extends CFGame {
             }
 
         }
+        private void paintundo() {
+            int undocol = g.colsPlayed.getLast();
+            for(int row = 5; row >= 0; row--){
+                {
+                    if (g.state[undocol][row]!=0) {
+                        squares[undocol][row].setBackground(Color.WHITE);
+                        g.state[undocol][row]=0;
+                        g.setRedTurn(!g.isRedTurn());
+                        g.colsPlayed.removeLast();
+                        gameOverLabel.setVisible(false);
+                        break;
+                    }
+                }
+            }
+
+        }
     }
 
     public class ButtonListener1 implements ActionListener {
@@ -187,6 +210,14 @@ public class GUICF extends CFGame {
                 gameOverLabel.setVisible(false);
                 g = new CFGame();
             }
+        }
+
+    }
+
+    public class ButtonListenerUndo implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+            this_board.paintundo();
         }
 
     }

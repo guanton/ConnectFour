@@ -3,8 +3,8 @@ public class Test {
     public static void main(String[] args) {
 
         CFPlayer ai1 = new minimaxAI();
-        CFPlayer ai2 = new myAI();
-        int n = 250;
+        CFPlayer ai2 = new minimaxAI_old();
+        int n = 300;
         int winCount = 0;
         int draws = 0;
         for (int i=0; i<n; i++) {
