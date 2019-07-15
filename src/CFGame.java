@@ -7,7 +7,7 @@ public class CFGame {
     //state[i][j]=-1 means the i,j slot is filled by black
     protected int[][] state;
     protected boolean isRedTurn;
-    //linked list stores the history of columns played in the game (for undo feature)
+    //linked list that stores the history of columns played in the game
     protected LinkedList<Integer> colsPlayed;
     //these sets represent the empty positions on the board in which a red or black tile
     //would end the game
@@ -63,17 +63,7 @@ public class CFGame {
         isRedTurn = b;
     }
 
-    public boolean playable(int column) {
-        //checks if the column is playable without changing the state
-        for (int j=0;j<6;j++){
-            if (state[column][j]==0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    //play the chip in the desired column
+    //play the chip in the desired column and output true if it is a legal move, false otherwise
     public boolean play(int column) {
         //check if there are zeros from bottom up
         for (int j=0;j<6;j++){
@@ -96,6 +86,7 @@ public class CFGame {
     }
 
 
+    //returns the winner of the game, 1 if red, -1 if black, 0 if draw
     public int winner() {
         //we need to check for four in a row horizontally, vertically, and diagonally for both players
 
@@ -144,10 +135,8 @@ public class CFGame {
         return 0;
     }
 
-
-
     public boolean isGameOver() {
-        //no player has 4 in a row yet
+        //a player has attained 4 in a row
         if (this.winner()!=0) {
             return true;
         }
@@ -180,9 +169,9 @@ public class CFGame {
         }
     }
 
-    //checks if there are 3 in a row with one empty slot
-    //adds empty spot to threatspots if applicable
-    public boolean hCheck3 (int[][] state, int p, int i, int j, CFGame g){
+    //checks if there are 3/4 filled horizontally with one empty slot
+    //adds the empty spot to threatspots if applicable
+    public boolean hCheck3 (int p, int i, int j){
         int count=0;
         int zeros=0;
         int zeroCol=0;
@@ -197,9 +186,9 @@ public class CFGame {
         }
         if (count==3 && zeros==1) {
             if (p==1) {
-                g.addRedthreatspot(new Pair(zeroCol, j));;
+                this.addRedthreatspot(new Pair(zeroCol, j));;
             } else {
-                g.addBlackthreatspot(new Pair(zeroCol, j));
+                this.addBlackthreatspot(new Pair(zeroCol, j));
             }
             return true;
         } else {
@@ -217,9 +206,9 @@ public class CFGame {
         }
     }
 
-    //checks if there are 3 in a row with one empty slot
+    //checks if there are 3/4 in a row vertically with one empty slot
     //adds empty spot to threatspots if applicable
-    public boolean vCheck3 (int[][] state, int p, int i, int j, CFGame g){
+    public boolean vCheck3 (int p, int i, int j){
         int count=0;
         int zeros=0;
         int zeroRow=0;
@@ -234,9 +223,9 @@ public class CFGame {
         }
         if (count==3 && zeros==1) {
             if (p==1) {
-                g.addRedthreatspot(new Pair(i, zeroRow));
+                this.addRedthreatspot(new Pair(i, zeroRow));
             } else {
-                g.addBlackthreatspot(new Pair(i, zeroRow));
+                this.addBlackthreatspot(new Pair(i, zeroRow));
             }
             return true;
         } else {
@@ -253,9 +242,9 @@ public class CFGame {
         }
     }
 
-    //checks if there are 3 in a row with one empty slot
+    //checks if there are 3/4 in a row with one empty slot
     //adds empty spot to threatspots if applicable
-    public boolean RdCheck3 (int[][] state, int p, int i, int j, CFGame g) {
+    public boolean RdCheck3 (int p, int i, int j) {
         int count=0;
         int zeros=0;
         int zeroCol=0;
@@ -274,9 +263,9 @@ public class CFGame {
         }
         if (count==3 && zeros==1) {
             if (p==1) {
-                g.addRedthreatspot(new Pair(zeroCol, zeroRow));
+                this.addRedthreatspot(new Pair(zeroCol, zeroRow));
             } else {
-                g.addBlackthreatspot(new Pair(zeroCol, zeroRow));
+                this.addBlackthreatspot(new Pair(zeroCol, zeroRow));
             }
             return true;
         } else {
@@ -284,7 +273,7 @@ public class CFGame {
         }
     }
 
-    //check for 4 in a row in the left diagonal beginning at (i,j)
+    //check for 3/4 in a row in the left diagonal beginning at (i,j)
     public boolean LdCheck ( int p, int i, int j) {
         if (state[i][j] == p && state[i - 1][j + 1] == p && state[i - 2][j + 2] == p && state[i - 3][j + 3] == p) {
             return true;
@@ -295,7 +284,7 @@ public class CFGame {
 
     //checks if there are 3 in a row with one empty slot
     //adds empty spot to threatspots if applicable
-    public boolean LdCheck3 (int[][] state, int p, int i, int j, CFGame g) {
+    public boolean LdCheck3 (int p, int i, int j) {
         int count=0;
         int zeros=0;
         int zeroCol=0;
@@ -314,9 +303,9 @@ public class CFGame {
         }
         if (count==3 && zeros==1) {
             if (p==1) {
-                g.addRedthreatspot(new Pair(zeroCol, zeroRow));
+                this.addRedthreatspot(new Pair(zeroCol, zeroRow));
             } else {
-                g.addBlackthreatspot(new Pair(zeroCol, zeroRow));
+                this.addBlackthreatspot(new Pair(zeroCol, zeroRow));
             }
             return true;
         } else {
@@ -324,149 +313,16 @@ public class CFGame {
         }
     }
 
-    //this method is only called from the minimaxAI class for returning its next move, but I put it here
-    //because it's easier to access all the internal fields of CFGame
-    //we assume that the maximizingPlayer is black. i.e. black tries to increase the score,
-    //red tries to decrease it. if the score is high, then black is winning.
 
-    //returns a pair, first coordinate is the score of the move, second coordinate is the column to be played
-    public Pair minimax(int[][] state, boolean maximizingPlayer, int n, double alpha, double beta, boolean old) {
-        //makes a copy of the board that represents "state"
-        CFGame c_= new CFGame();
-        c_.setState(state);
-        //whose turn is it? since black is maximizingPlayer, red is the opposite
-        c_.setRedTurn(!maximizingPlayer);
-        //BASE CASES:
-        //if the board state represents a finished game or if n==0 (last examined layer)
-        if (c_.isGameOver() || n==0) {
-            if (c_.isGameOver()) {
-                if (c_.winner()==1) {
-                    //black player lost
-                    return new Pair(Double.NEGATIVE_INFINITY, colsPlayed.getLast());
-                } else if (c_.winner()==-1) {
-                    //black player won
-                    return new Pair(Double.POSITIVE_INFINITY, colsPlayed.getLast());
-                } else if (c_.winner()==0){
-                    //draw
-                    return new Pair(0.0, colsPlayed.getLast());
-                }
-            }
-            //last examined layer
-            if (n==0) {
-                if (!old) {
-                    return new Pair(evaluateState(state), colsPlayed.getLast());
-                } else {
-                    return new Pair(oldEvaluateState(state), colsPlayed.getLast());
-                }
-            }
-        }
+    public double evaluateState() {
 
-        //Black's POV
-        if (maximizingPlayer) {
-            //initially, assume the worst
-            double maxVal = Double.NEGATIVE_INFINITY;
-            //copy of game where it is black's turn
-            CFGame game_ = new CFGame();
-            game_.setRedTurn(false);
-            int col=3;
-            //first, pick the mid column, if nothing better is found
-            //then this column will be played
-            //now we see if there are any better moves
-            for (int x = 0; x < 7; x++) {
-                //we build the (up to) 7 sub-boards by playing each column on the original board
-                CFGame game = new CFGame();
-                game.setRedTurn(false);
-                game.setState(c_.getState());
-                //consider the move, if valid
-                if (game.play(x)) {
-                    //retrieve its score recursively
-                    double currVal = (double) minimax(game.getState(), false, n-1, alpha, beta, old).getFirst();
-                    if ((double) currVal>maxVal) {
-                        maxVal= (double) currVal;
-                        col = x;
-                    }
-                    //alpha beta pruning, if in the turn after, red (minimizing player) has a better option (beta),
-                    //i.e. beta<=alpha, then we don't need to look at that subtree since black (maximizing) would
-                    //never go down that path
-                    alpha = Math.max(alpha, currVal);
-                    if (beta<=alpha) {
-                        break;
-                    }
-                }
-            }
-            if (maxVal>Double.NEGATIVE_INFINITY) {
-                return new Pair(maxVal, col);
-            } else {
-                //if going to lose anyway, return random column
-                boolean illegal=true;
-                Random r = new Random();
-                while (illegal) {
-                    int newcol = r.nextInt(7);
-                    if (c_.playable(newcol)) {
-                        return new Pair(maxVal, newcol);
-                    }
-                }
-            }
-        } else {
-            //initially, assume the worst (for red), which means that Black wins
-            double minVal = Double.POSITIVE_INFINITY;
-            //copy of game where it is red's turn
-            CFGame game_ = new CFGame();
-            game_.setRedTurn(true);
-            int col=3;
-            //now we see if there are any better moves
-            for (int x = 0; x < 7; x++) {
-                //make a copy of the board
-                CFGame game = new CFGame();
-                game.setRedTurn(true);
-                game.setState(c_.getState());
-                //consider the move, if valid
-                if (game.play(x)) {
-                    //retrieve its score recursively
-                    double currVal = (double) minimax(game.getState(), true, n-1, alpha, beta, old).getFirst();
-                    if ((double) currVal<minVal) {
-                        minVal= (double) currVal;
-                        col = x;
-                    }
-                    beta = Math.min(beta, currVal);
-                    if (beta<=alpha) {
-                        break;
-                    }
-                }
-            }
-            if (minVal<Double.POSITIVE_INFINITY) {
-                return new Pair(minVal, col);
-            } else {
-                //if you're going to lose anyway, just generate a random column
-                boolean illegal=true;
-                Random r = new Random();
-                while (illegal) {
-                    int newcol = r.nextInt(7);
-                    if (c_.playable(newcol)) {
-                        return new Pair(minVal, newcol);
-                    }
-                }
-            }
-        }
-        return new Pair(0,0);
-    }
-
-
-
-    public double evaluateState(int[][] state) {
-        //some noise between 0-1
+        //start with some noise between 0-1
         double score=Math.random();
-        int[][] s = this.getState();
-        CFGame g = new CFGame();
-        g.setState(state);
-        //check for threats of 3
+
         List<Integer> players = new ArrayList <Integer>();
         players.add(1);
         players.add(-1);
         for (int p: players) {
-
-            int numChecks=0;
-
             //award positioning points accordingly (center spots are valued)
             for (int j=0; j<4;j++) {
                 for (int i=2; i<=4; i++) {
@@ -483,10 +339,13 @@ public class CFGame {
                 }
             }
 
+            //check for threats of 3:
+            int numChecks=0;
+
             //loop for horizontal check
             for (int i = 0; i <= 3; i++) {
                 for (int j = 0; j < 6; j++) {
-                    if (this.hCheck3(state, p, i, j, g)) {
+                    if (this.hCheck3(p, i, j)) {
                         numChecks=numChecks+1;
                         if (i==2 && j==2) {
                             numChecks=numChecks+1;
@@ -498,7 +357,7 @@ public class CFGame {
             //loop for vertical  check
             for (int i = 0; i < 7; i++) {
                 for (int j = 0; j <= 2; j++) {
-                    if (this.vCheck3(state, p, i, j, g)) {
+                    if (this.vCheck3(p, i, j)) {
                         numChecks++;
                     }
                 }
@@ -507,7 +366,7 @@ public class CFGame {
             //loop for rightward diagonal check
             for (int i = 0; i <= 3; i++) {
                 for (int j = 0; j <= 2; j++) {
-                    if (this.RdCheck3(state, p, i, j, g)) {
+                    if (this.RdCheck3(p, i, j)) {
                         numChecks++;
                     }
                 }
@@ -516,7 +375,7 @@ public class CFGame {
             //loop for leftward diagonal check
             for (int i = 6; i >= 3; i--) {
                 for (int j = 0; j <= 2; j++) {
-                    if (this.LdCheck3(state, p, i, j, g)) {
+                    if (this.LdCheck3(p, i, j)) {
                         numChecks++;
                     }
                 }
@@ -530,14 +389,12 @@ public class CFGame {
             }
         }
 
-
-
         //a threat spot is a unique spot on the board in which one more tile will result in a win
         //ex. if red has 3 threat spots, then there are 3 currently empty spots on the board that would
         //imply a red win if red gets a tile in that spot
 
-        score = score + 600*g.getBlackthreatspots().size();
-        score = score - 600*g.getRedthreatspots().size();
+        score = score + 600*this.getBlackthreatspots().size();
+        score = score - 600*this.getRedthreatspots().size();
 
         //for every column, we determine the lowermost row that red threatens
         List<Integer> minRowRed = new ArrayList();
@@ -547,7 +404,7 @@ public class CFGame {
             minRowRed.add(6);
             minRowBlack.add(6);
         }
-        for (Pair p: g.getRedthreatspots()) {
+        for (Pair p: this.getRedthreatspots()) {
             //identify which column the pair represents
             for (int x=0; x<7; x++) {
                 if ((int) p.getFirst()==x) {
@@ -558,7 +415,7 @@ public class CFGame {
                 }
             }
         }
-        for (Pair p: g.getBlackthreatspots()) {
+        for (Pair p: this.getBlackthreatspots()) {
             for (int x=0; x<7; x++) {
                 if ((int) p.getFirst()==x) {
                     if (minRowBlack.get(x) > (int) p.getSecond()) {
@@ -581,7 +438,7 @@ public class CFGame {
     }
 
 
-    public double oldEvaluateState(int[][] state) {
+    public double oldEvaluateState() {
         double score=Math.random();
         return score;
     }
