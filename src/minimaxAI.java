@@ -10,21 +10,18 @@ public class minimaxAI implements CFPlayer{
         long startTime = System.nanoTime();
 
         //start
+        int countmid=0;
         int[][] s = g.getState();
         List<Integer> start = new ArrayList<>();
         for (int y=0; y<6; y++) {
-            start.add(s[3][y]);
+            if (s[3][y] != 0) {
+                countmid++;
+            }
         }
-        if (!start.contains(-1)) {
+        if (countmid==1 || countmid==0 || (countmid ==3 && g.colsPlayed.size()==3 )) {
             return 3;
         }
-        List<Integer> start1 = new ArrayList<>();
-        for (int y=0; y<6; y++) {
-            start1.add(s[4][y]);
-        }
-        if (!start1.contains(1) && !start1.contains(-1)) {
-            return 4;
-        }
+
         //if dire
         for (int i = 0; i < 7; i++) {
             // prevent accumulation
@@ -50,10 +47,10 @@ public class minimaxAI implements CFPlayer{
         //regular
         if (!g.isRedTurn) {
             long endTime = System.nanoTime();
-            return (int) g.minimax(g.getState(), true, 5, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, false).getSecond();
+            return (int) g.minimax(g.getState(), true, 6, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, false).getSecond();
         } else {
             long endTime = System.nanoTime();
-            return (int) g.minimax(g.getState(), false, 5, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, false).getSecond();
+            return (int) g.minimax(g.getState(), false, 6, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, false).getSecond();
         }
     }
 

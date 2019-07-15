@@ -88,6 +88,7 @@ public class GUICF extends CFGame {
         //play the column
         g.play(c);
         //retrieve the row
+        System.out.println(g.colsPlayed);
         int row = getRowThatJustGotPlayed(c);
         //paint corresponding cell
         if(g.isRedTurn())
@@ -114,7 +115,6 @@ public class GUICF extends CFGame {
         int[][] board = g.getState();
         for(int row = 0; row < 6; row++){
             if(board[col][row] == 0) {
-                System.out.println(row + " " + col);
                 return row-1; // return nonzero row which is below current row
             }
         }
@@ -261,7 +261,7 @@ public class GUICF extends CFGame {
     }
 
     public static void main(String[] args) {
-        GUICF guiGame = new GUICF(new minimaxAI());
+        GUICF guiGame = new GUICF(new minimaxAI() );
     }
 
 }

@@ -464,7 +464,7 @@ public class CFGame {
         players.add(1);
         players.add(-1);
         for (int p: players) {
-            int numThreats=0;
+
             int numChecks=0;
 
             //award positioning points accordingly (center spots are valued)
@@ -539,23 +539,41 @@ public class CFGame {
         score = score + 600*g.getBlackthreatspots().size();
         score = score - 600*g.getRedthreatspots().size();
 
-        //particularly dangerous is when you have multiple threat spots in a given column
-
-        List<Integer> threatcols = new ArrayList<>();
+        //for every column, we determine the lowermost row that red threatens
+        List<Integer> minRowRed = new ArrayList();
+        List<Integer> minRowBlack = new ArrayList<>();
+        //fill it with 6s first (not even on the board)
+        for (int x=0; x<7; x++) {
+            minRowRed.add(6);
+            minRowBlack.add(6);
+        }
         for (Pair p: g.getRedthreatspots()) {
-            if (!threatcols.contains(p.getFirst())) {
-                threatcols.add((Integer) p.getFirst());
-            } else {
-                score=score-600;
+            //identify which column the pair represents
+            for (int x=0; x<7; x++) {
+                if ((int) p.getFirst()==x) {
+                    //replace the lowest row if the pair represents a lower row than current
+                    if (minRowRed.get(x)> (int) p.getSecond()) {
+                        minRowRed.set(x, (int) p.getSecond());
+                    }
+                }
+            }
+        }
+        for (Pair p: g.getBlackthreatspots()) {
+            for (int x=0; x<7; x++) {
+                if ((int) p.getFirst()==x) {
+                    if (minRowBlack.get(x) > (int) p.getSecond()) {
+                        minRowBlack.set(x, (int) p.getSecond());
+                    }
+                }
             }
         }
 
-        List<Integer> threatcolsblack = new ArrayList<>();
-        for (Pair p: g.getBlackthreatspots()) {
-            if (!threatcolsblack.contains(p.getFirst())) {
-                threatcolsblack.add((Integer) p.getFirst());
-            } else {
-                score=score+600;
+        for (int x=0; x<7; x++) {
+            if (minRowBlack.get(x) < minRowRed.get(x)) {
+                score = score + 1000;
+            }
+            if (minRowRed.get(x)< minRowBlack.get(x)) {
+                score = score - 1000;
             }
         }
 
@@ -567,6 +585,8 @@ public class CFGame {
         double score=Math.random();
         return score;
     }
+
+
 
     /*
     public double checkPins(int[][] state) {
