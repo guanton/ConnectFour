@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class minimaxAI_old implements CFPlayer{
+public class minimaxAI_old extends minimaxAI{
 
     @Override
     public int nextMove(CFGame g) {
@@ -48,9 +48,9 @@ public class minimaxAI_old implements CFPlayer{
         }
         //regular
         if (!g.isRedTurn) {
-            return (int) g.minimax(g.getState(), true, 4, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, true).getSecond();
+            return (int) minimax(g, true, 4, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, true).getSecond();
         } else {
-            return (int) g.minimax(g.getState(), false, 4, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, true).getSecond();
+            return (int) minimax(g, false, 4, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, true).getSecond();
         }
     }
 

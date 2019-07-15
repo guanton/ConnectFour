@@ -229,6 +229,8 @@ public class CFGame {
             }
             return true;
         } else {
+
+
             return false;
         }
     }
@@ -249,19 +251,33 @@ public class CFGame {
         int zeros=0;
         int zeroCol=0;
         int zeroRow=0;
-        for (int x=i; x<i+4;x++) {
-            for (int y=j; y<j+4;y++) {
-                if (state[x][y]==p) {
-                    count++;
-                }
-                if (state[x][y]==0) {
-                    zeroCol=x;
-                    zeroRow=y;
-                    zeros++;
-                }
+        List<Integer> ld = new ArrayList<>();
+        ld.add(state[i][j]);
+        ld.add(state[i+1][j+1]);
+        ld.add(state[i+2][j+2]);
+        ld.add(state[i+3][j+3]);
+        for (Integer x: ld) {
+            if (x==p) {
+                count++;
+            }
+            if (x==0) {
+                zeros++;
             }
         }
         if (count==3 && zeros==1) {
+            if (state[i][j]==0) {
+                zeroCol=i;
+                zeroRow=j;
+            } else if (state[i+1][j+1]==0) {
+                zeroCol=i+1;
+                zeroRow=j+1;
+            } else if (state[i+2][j+2]==0) {
+                zeroCol=i+2;
+                zeroRow=j+2;
+            } else {
+                zeroCol=i+3;
+                zeroRow=j+3;
+            }
             if (p==1) {
                 this.addRedthreatspot(new Pair(zeroCol, zeroRow));
             } else {
@@ -289,19 +305,33 @@ public class CFGame {
         int zeros=0;
         int zeroCol=0;
         int zeroRow=0;
-        for (int x=i; x>i-4;x--) {
-            for (int y=j; y<j+4;y++) {
-                if (state[x][y]==p) {
-                    count++;
-                }
-                if (state[x][y]==0) {
-                    zeroCol=x;
-                    zeroRow=y;
-                    zeros++;
-                }
+        List<Integer> ld = new ArrayList<>();
+        ld.add(state[i][j]);
+        ld.add(state[i-1][j+1]);
+        ld.add(state[i-2][j+2]);
+        ld.add(state[i-3][j+3]);
+        for (Integer x: ld) {
+            if (x==p) {
+                count++;
+            }
+            if (x==0) {
+                zeros++;
             }
         }
         if (count==3 && zeros==1) {
+            if (state[i][j]==0) {
+                zeroCol=i;
+                zeroRow=j;
+            } else if (state[i-1][j+1]==0) {
+                zeroCol=i-1;
+                zeroRow=j+1;
+            } else if (state[i-2][j+2]==0) {
+                zeroCol=i-2;
+                zeroRow=j+2;
+            } else {
+                zeroCol=i-3;
+                zeroRow=j+3;
+            }
             if (p==1) {
                 this.addRedthreatspot(new Pair(zeroCol, zeroRow));
             } else {
@@ -315,6 +345,9 @@ public class CFGame {
 
 
     public double evaluateState() {
+
+        this.getBlackthreatspots().clear();
+        this.getRedthreatspots().clear();
 
         //start with some noise between 0-1
         double score=Math.random();
@@ -383,9 +416,9 @@ public class CFGame {
 
 
             if (p==1) {
-                score=score-500*numChecks;
+                score=score-1000*numChecks;
             } else {
-                score=score+500*numChecks;
+                score=score+1000*numChecks;
             }
         }
 

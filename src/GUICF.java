@@ -88,7 +88,17 @@ public class GUICF extends CFGame {
         //play the column
         g.play(c);
         //retrieve the row
-        System.out.println(g.colsPlayed);
+        g.evaluateState();
+
+        System.out.print("Move "+ g.colsPlayed.size());
+
+        for (Pair p: g.getBlackthreatspots()) {
+            System.out.println("B: " + p.getFirst() + ", " + p.getSecond());
+        }
+        for (Pair p: g.getRedthreatspots()) {
+            System.out.println("R: " + p.getFirst() + ", " + p.getSecond());
+        }
+
         int row = getRowThatJustGotPlayed(c);
         //paint corresponding cell
         if(g.isRedTurn())
