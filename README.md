@@ -9,7 +9,7 @@ I did this by making a simple "smart" AI that will always play a winning move if
 a losing move if possible. This AI beat the random AI about 96% of the time.
 
 However, my goal was to make an even stronger AI using minimax with alpha-beta pruning (to make the program faster). 
-As it stands, my minimaxAI beats the random AI 100% of the time (rounded to nearest hundredth), and it beats the "smart" AI 97% of the time.
+As it stands, my minimaxAI beats the random AI and the "smart" AI 100% of the time (rounded to nearest hundredth). Since Connect Four is a perfect game, it is obviously still possible to beat my AI, but it is pretty difficult, and I am continuing to make small tweaks to make my AI even stronger.
 
 I think that doing this simple project will be very helpful for my chess project. I developped my skills in:
 
