@@ -13,9 +13,7 @@ public class minimaxAI implements CFPlayer {
                 countmid++;
             }
         }
-        if (countmid==1 || countmid==0 || (countmid ==3 && g.colsPlayed.size()==3 )) {
-            return 3;
-        }
+
 
         //if dire
         for (int i = 0; i < 7; i++) {
@@ -37,6 +35,17 @@ public class minimaxAI implements CFPlayer {
             copyg_.play(i);
             if (copyg_.isGameOver()) {
                 return i;
+            }
+        }
+
+        if (!g.colsPlayed.isEmpty()) {
+            if (countmid==0 && g.colsPlayed.getLast()==1  && g.colsPlayed.size()==1) {
+                return 2;
+            } else if (countmid==0 && g.colsPlayed.getLast()==5  && g.colsPlayed.size()==1) {
+                return 4;
+            }
+            if (countmid==1 || countmid==0 || (countmid ==3 && g.colsPlayed.size()==3 )) {
+                return 3;
             }
         }
 

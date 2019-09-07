@@ -1,7 +1,6 @@
 import java.util.*;
 
 public class CFGame {
-
     //state[i][j]= 0 means that column i, row j is empty
     //state[i][j]= 1 means the i,j slot is filled by red
     //state[i][j]=-1 means the i,j slot is filled by black
@@ -380,9 +379,6 @@ public class CFGame {
                 for (int j = 0; j < 6; j++) {
                     if (this.hCheck3(p, i, j)) {
                         numChecks=numChecks+1;
-                        if (i==2 && j==2) {
-                            numChecks=numChecks+1;
-                        }
                     }
                 }
             }
@@ -416,9 +412,9 @@ public class CFGame {
 
 
             if (p==1) {
-                score=score-1000*numChecks;
+                score=score-250*numChecks;
             } else {
-                score=score+1000*numChecks;
+                score=score+250*numChecks;
             }
         }
 
@@ -426,8 +422,8 @@ public class CFGame {
         //ex. if red has 3 threat spots, then there are 3 currently empty spots on the board that would
         //imply a red win if red gets a tile in that spot
 
-        score = score + 600*this.getBlackthreatspots().size();
-        score = score - 600*this.getRedthreatspots().size();
+        score = score + 500*this.getBlackthreatspots().size();
+        score = score - 500*this.getRedthreatspots().size();
 
         //for every column, we determine the lowermost row that red threatens
         List<Integer> minRowRed = new ArrayList();
@@ -459,11 +455,26 @@ public class CFGame {
         }
 
         for (int x=0; x<7; x++) {
+            CFGame game = new CFGame();
+            game.setState(this.getState());
+            if (game.play(x)) {
+                if (game.play(x) && game.winner()==-1) {
+
+                }
+            }
+            CFGame game2 = new CFGame();
+            game2.setRedTurn(false);
+            game2.setState(this.getState());
+            if (game2.play(x)) {
+                if (game2.play(x) && game2.winner()==1) {
+                    score=score-500;
+                }
+            }
             if (minRowBlack.get(x) < minRowRed.get(x)) {
-                score = score + 1000;
+                score = score + 500;
             }
             if (minRowRed.get(x)< minRowBlack.get(x)) {
-                score = score - 1000;
+                score = score - 500;
             }
         }
 
@@ -476,73 +487,6 @@ public class CFGame {
         return score;
     }
 
-
-
-    /*
-    public double checkPins(int[][] state) {
-        //start off with score 0
-        double score = 0;
-        //create a copy of the board
-        CFGame c__ = new CFGame();
-        c__.setState(state);
-
-
-        for (int x=0; x<7; x++) {
-            //for each iteration, make a copy of the board
-            CFGame c = new CFGame();
-            c.setState(state);
-            c.setRedTurn(true);
-            c__.setRedTurn(true);
-            //red plays column x
-            if (c.play(x)) {
-                if (c.isGameOver() && c.winner()==1) {
-                    //red is one move away from winning
-                    score=score-5000;
-                    c__.setRedTurn(false);
-                    //what if black plays red's winning move?
-                    c__.play(x);
-                    //if red can still win by playing the same column
-                    //then that's a double pin, award 10 times the amount of points
-                    if (c__.play(x)&& c.winner()==1 ) {
-                        score = score-100000;
-                    }
-                }
-                //black plays same column as red's last turn and wins
-                if (c.play(x)) {
-                    if (c.isGameOver() && c.winner()==-1) {
-                        score=score+10000;
-                    }
-                }
-            }
-        }
-
-        //symmetric procedure
-        for (int x=0; x<7; x++) {
-            CFGame c = new CFGame();
-            c.setState(state);
-            c.setRedTurn(false);
-            //black plays column x
-            if (c.play(x)) {
-                if (c.isGameOver() && c.winner()==-1) {
-                    score=score+5000;
-                    c__.setRedTurn(true);
-                    //red prevents
-                    c__.play(x);
-                    if (c__.play(x)&& c.winner()==-1 ) {
-                        score = score+100000;
-                    }
-                }
-                //red plays the same column
-                if (c.play(x)) {
-                    if (c.isGameOver() && c.winner()==1) {
-                        score=score-10000;
-                    }
-                }
-            }
-        }
-        return score;
-    }
-*/
 }
 
 
